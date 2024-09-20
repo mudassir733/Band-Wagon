@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
-import "./OnboardingSlider.css"
 import Image from 'next/image'
 
 const slides = [
@@ -37,7 +36,7 @@ export default function OnboardingSlider() {
 
   return (
     <div className="bg-[#121212] w-full h-screen flex items-center overflow-hidden">
-      <div className="w-full layout">
+      <div className="w-full flex gap-[132px] items-center justify-center">
       <motion.div  key={currentSlide}
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
