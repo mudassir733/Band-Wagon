@@ -1,0 +1,16 @@
+.layout{
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 132px;
+}
+
+.heading{
+    color: var(--Secondary-White, #FFF);
+font-family: Lato;
+font-size: 40px;
+font-style: normal;
+font-weight: 700;
+line-height: 48px; 
+letter-spacing: -0.8px;
+}
