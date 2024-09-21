@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { setCookie } from 'cookies-next'
 import Image from 'next/image'
 
 const slides = [
@@ -30,8 +32,11 @@ const slides = [
 export default function OnboardingSlider() {
   const [currentSlide, setCurrentSlide] = useState(0)
 
+
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))
+
+ 
   }
 
   return (
@@ -72,14 +77,14 @@ export default function OnboardingSlider() {
                   <div
                     key={index}
                     className={`w-2 h-2 rounded-full ${
-                      index === currentSlide ? 'bg-green-500' : 'bg-gray-600'
+                      index === currentSlide ? 'bg-primary' : 'bg-gray-600'
                     }`}
                   />
                 ))}
               </div>
               <button
                 onClick={nextSlide}
-                className="bg-green-500 text-white px-6 py-2 rounded-full flex items-center"
+                className="bg-primary text-white px-6 py-2 rounded-full flex items-center"
               >
                 {currentSlide === slides.length - 1 ? 'Get Started' : 'Continue'}
                 <ChevronRight className="ml-2 h-4 w-4" />
