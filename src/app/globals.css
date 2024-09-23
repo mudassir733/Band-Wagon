@@ -31,3 +31,19 @@
     text-wrap: balance;
   }
 }
+
+
+
+:root{
+  --primary-color: "#1ED760",
+  --black-color: "#000000",
+  --background-color: "#2A2B2F",
+  --activePrimary-color: "#1ED76026",
+  --white-color: "#fff"
+
+  /* -----Fonts----- */
+  --lato-black: "lato-black", sans-serif,
+  --lato-light: "lato-light", sans-serif,
+  --lato-bold: "lato-bold", sans-serif,
+  --lato-regular: "lato-regular", sans-serif,
+}
