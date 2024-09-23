@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { setCookie } from 'cookies-next'
 import Image from 'next/image'
 
 const slides = [
