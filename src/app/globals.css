@@ -95,10 +95,10 @@
 }
 
 
-/* --------Display----- */
+/* --------Display Large----- */
 .display-regular {
   color: var(--black-color);
-  font-family: Lato;
+  font-family: var(--lato-regular);
   font-size: 52px;
   font-style: normal;
   font-weight: 500;
@@ -108,7 +108,7 @@
 
 .display-medium {
   color: var(--black-color);
-  font-family: Lato;
+  font-family: var(--lato-regular);
   font-size: 52px;
   font-style: normal;
   font-weight: 600;
@@ -118,7 +118,7 @@
 
 .display-bold {
   color: var(--black-color);
-  font-family: Lato;
+  font-family: var(--lato-bold);
   font-size: 52px;
   font-style: normal;
   font-weight: 700;
@@ -128,10 +128,369 @@
 
 .display-black {
   color: var(--black-color);
-  font-family: Lato;
+  font-family: var(--lato-black);
   font-size: 52px;
   font-style: normal;
   font-weight: 900;
   line-height: 56px;
   letter-spacing: -1.04px;
+}
+
+/* --------Display Small----- */
+.displaySmall-regular {
+  color: var(--black-color);
+  font-family: var(--lato-regular);
+  font-size: 44px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 48px;
+  letter-spacing: -0.88px;
+}
+
+.displaySmall-medium {
+  color: var(--black-color);
+  font-family: var(--lato-regular);
+  font-size: 44px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: -0.88px;
+}
+
+.displaySmall-bold {
+  color: var(--black-color);
+  font-family: var(--lato-bold);
+  font-size: 44px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: -0.88px;
+}
+
+.displaySmall-black {
+  color: var(--black-color);
+  font-family: var(--lato-black);
+  font-size: 44px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 48px;
+  letter-spacing: -0.88px;
+}
+
+
+
+/* ------Headings 1------ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--black-color);
+}
+
+.heading-regular {
+  font-family: var(--lato-regular);
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 48px;
+  letter-spacing: -0.8px;
+}
+
+.heading-medium {
+  font-family: var(--lato-regular);
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: -0.8px;
+}
+
+.heading-bold {
+  font-family: var(--lato-bold);
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: -0.8px;
+}
+
+.heading-black {
+  font-family: var(--lato-black);
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 48px;
+  letter-spacing: -0.8px;
+}
+
+/* ---------Heading 2---------- */
+
+.heading-2-regular {
+  font-family: var(--lato-regular);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 44px;
+  letter-spacing: -0.72px;
+}
+
+.heading-2-medium {
+  font-family: var(--lato-regular);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 44px;
+  letter-spacing: -0.72px;
+}
+
+.heading-2-bold {
+  font-family: var(--lato-bold);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 44px;
+  letter-spacing: -0.72px;
+}
+
+.heading-2-black {
+  font-family: var(--lato-black);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 44px;
+  letter-spacing: -0.72px;
+}
+
+/* ---------Heading 3--------- */
+
+.heading-3-regular {
+  font-family: var(--lato-regular);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 40px;
+  /* 125% */
+  letter-spacing: -0.64px;
+}
+
+.heading-3-medium {
+  font-family: var(--lato-regular);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 40px;
+  /* 125% */
+  letter-spacing: -0.64px;
+}
+
+
+.heading-3-bold {
+  font-family: var(--lato-bold);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 40px;
+  /* 125% */
+  letter-spacing: -0.64px;
+}
+
+.heading-3-black {
+  font-family: var(--lato-black);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 40px;
+  letter-spacing: -0.64px;
+}
+
+/* ------Heading 4--------- */
+.heading-4-regular {
+  font-family: var(--lato-regular);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: -0.64px;
+}
+
+.heading-4-medium {
+  font-family: var(--lato-regular);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: -0.64px;
+}
+
+.heading-4-bold {
+  font-family: var(--lato-bold);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: -0.64px;
+}
+
+.heading-4-black {
+  font-family: var(--lato-black);
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: -0.64px;
+}
+
+/* --------Heading 5--------- */
+.heading-5-regular {
+  font-family: var(--lato-regular);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32px;
+  letter-spacing: -0.48px;
+}
+
+.heading-5-medium {
+  font-family: var(--lato-regular);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.48px;
+}
+
+.heading-5-bold {
+  font-family: var(--lato-bold);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: -0.48px;
+}
+
+.heading-5-black {
+  font-family: var(--lato-black);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 32px;
+  letter-spacing: -0.48px;
+}
+
+
+/* ---------Heading 6--------- */
+.heading-6-regular {
+  font-family: var(--lato-regular);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+.heading-6-medium {
+  font-family: var(--lato-regular);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+.heading-6-bold {
+  font-family: var(--lato-bold);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+.heading-6-black {
+  font-family: var(--lato-black);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+/* -------Paragraph Large------ */
+.p-large-regular {
+  color: var(--black-color);
+  font-family: var(--lato-regular);
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+.p-large-medium {
+  color: var(--black-color);
+  font-family: var(--lato-regular);
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 28px;
+}
+
+/* -------Paragraph Medium------ */
+.p-medium-regula {
+  color: var(--black-color);
+  font-family: var(--lato-regular);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.p-medium {
+  color: var(--black-color);
+  font-family: var(--lato-regular);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+/* --------Paragraph Samll--------- */
+.p-small-regular {
+  color: var(--black-color);
+  font-family: var(--lato-regular);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.p-small-medium {
+  font-family: var(--lato-regular);
+  color: var(--black-color);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+
+/* -------Paragraph X Small-------- */
+.p-x-regular {
+  font-family: var(--lato-regular);
+  font-size: 12px;
+  color: var(--black-color);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.p-x-medium {
+  font-family: var(--lato-regular);
+  font-size: 12px;
+  color: var(--black-color);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
 }
