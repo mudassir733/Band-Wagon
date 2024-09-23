@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Button = () => {
-  return 
+  return
 }
 
 export default Button

@@ -7,12 +7,13 @@ import Image from 'next/image'
 import google from "../../../public/images/google.svg"
 import facebook from "../../../public/images/facebook.svg"
 import apple from "../../../public/images/apple.svg"
+import styles from "./styles.module.css"
 
 const SignUp = () => {
   return (
-   <div className='w-full h-screen bg-background pl-[137px]'>
+    <section>
 
-   </div>
+    </section>
   )
 }
 
