@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 
+/* -----Fonts----- */
 @font-face {
   font-family: 'lato-black';
   src: url('/lato/Lato-Black.ttf') format('truetype');
@@ -34,7 +35,7 @@
 }
 
 
-
+/* ------Global colors-------- */
 :root {
   /* -----primary colors----- */
   --primary-color-50: #8EEBAF;
@@ -91,4 +92,46 @@
   --lato-light: "lato-light", sans-serif;
   --lato-bold: "lato-bold", sans-serif;
   --lato-regular: "lato-regular", sans-serif;
+}
+
+
+/* --------Display----- */
+.display-regular {
+  color: var(--black-color);
+  font-family: Lato;
+  font-size: 52px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 56px;
+  letter-spacing: -1.04px;
+}
+
+.display-medium {
+  color: var(--black-color);
+  font-family: Lato;
+  font-size: 52px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 56px;
+  letter-spacing: -1.04px;
+}
+
+.display-bold {
+  color: var(--black-color);
+  font-family: Lato;
+  font-size: 52px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 56px;
+  letter-spacing: -1.04px;
+}
+
+.display-black {
+  color: var(--black-color);
+  font-family: Lato;
+  font-size: 52px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 56px;
+  letter-spacing: -1.04px;
 }
