@@ -1,0 +1,37 @@
+.button {
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-family: var(--lato-regular);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filled {
+    background-color: var(--primary-color, #1ED760);
+    color: white;
+    border: none;
+}
+
+.outlined {
+    background-color: transparent;
+    border: 2px solid var(--primary-color, #1ED760);
+    color: var(--primary-color, #1ED760);
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+}
+
+.icon span {
+    margin-right: 8px;
+}
+
+.disabled {
+    background-color: var(--neutral-color-300, #D4D4D4);
+    cursor: not-allowed;
+    color: var(--neutral-color-500, #737373);
+    border: none;
+}
