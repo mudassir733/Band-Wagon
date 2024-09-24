@@ -82,6 +82,7 @@
     font-size: 14px;
     display: flex;
     align-items: center;
+
 }
 
 .arrow {
@@ -91,20 +92,32 @@
 
 .dropdownMenu {
     position: absolute;
-    top: 100%;
-    left: 0;
+    top: 223%;
+    left: -224%;
     background-color: #2a2a2a;
-    border-radius: 4px;
-    padding: 10px 0;
-    list-style-type: none;
-    margin: 5px 0 0;
-    min-width: 120px;
+    color: #fff;
+    width: 352px;
+    height: fit-content;
+    padding: 45px;
+    border: 1px solid #353535;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 1000;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    align-items: center;
+    justify-content: center;
 }
 
 .dropdownMenu li {
-    padding: 5px 15px;
+    text-align: center;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 20px;
+    padding-bottom: 5px;
 }
 
 .dropdownMenu li:hover {
