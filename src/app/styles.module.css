@@ -1,0 +1,125 @@
+.map {
+    width: 100%;
+    height: 100vh;
+    background-color: #111;
+}
+
+.map .flex_nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 32px;
+}
+
+.map .flex_nav .navbar .flex {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+}
+
+.map .flex_nav .navbar .box {
+    display: flex;
+    padding: 6px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.map .flex_nav .navbar .box.active {
+    background-color: var(--primary-color);
+    border-radius: 50px;
+}
+
+
+
+.map .flex_nav .navbar .box .iconButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 20px;
+}
+
+.map .flex_nav .navbar {
+    width: 703px;
+    height: 68px;
+    border-radius: 100px;
+    background: #2A2B2F;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    justify-content: center;
+}
+
+.map .main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+}
+
+.iconButton svg {
+    margin-right: 5px;
+}
+
+.dropdown {
+    position: relative;
+    margin-right: 20px;
+}
+
+.dropdownToggle {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+
+}
+
+.arrow {
+    margin-left: 5px;
+    font-size: 10px;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 223%;
+    left: -224%;
+    background-color: #2a2a2a;
+    color: #fff;
+    width: 352px;
+    height: fit-content;
+    padding: 45px;
+    border: 1px solid #353535;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.dropdownMenu li {
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 20px;
+    padding-bottom: 5px;
+}
+
+.dropdownMenu li:hover {
+    background-color: #3a3a3a;
+}
