@@ -1,0 +1,112 @@
+.map {
+    width: 100%;
+    height: 100vh;
+    background-color: #111;
+}
+
+.map .flex_nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 32px;
+}
+
+.map .flex_nav .navbar .flex {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+}
+
+.map .flex_nav .navbar .box {
+    display: flex;
+    padding: 6px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.map .flex_nav .navbar .box.active {
+    background-color: var(--primary-color);
+    border-radius: 50px;
+}
+
+
+
+.map .flex_nav .navbar .box .iconButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 20px;
+}
+
+.map .flex_nav .navbar {
+    width: 703px;
+    height: 68px;
+    border-radius: 100px;
+    background: #2A2B2F;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    justify-content: center;
+}
+
+.map .main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+}
+
+.iconButton svg {
+    margin-right: 5px;
+}
+
+.dropdown {
+    position: relative;
+    margin-right: 20px;
+}
+
+.dropdownToggle {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.arrow {
+    margin-left: 5px;
+    font-size: 10px;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    padding: 10px 0;
+    list-style-type: none;
+    margin: 5px 0 0;
+    min-width: 120px;
+    z-index: 1000;
+}
+
+.dropdownMenu li {
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.dropdownMenu li:hover {
+    background-color: #3a3a3a;
+}
