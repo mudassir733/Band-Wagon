@@ -11,6 +11,7 @@ import tick from "../../public/images/Tick.svg"
 import unTick from "../../public/images/unTick.svg"
 import Image from 'next/image'
 import styles from './styles.module.css'
+import Sidebar from "../components/sidebar/Sidebar"
 
 const Dropdown = ({ label, options, isOpen, onToggle, selected = [], onSelect }) => {
   const handleSelect = (option, e) => {
@@ -109,7 +110,9 @@ export default function Home() {
             </div>
           </nav>
         </div>
+        <Sidebar />
       </div>
+
     </>
   );
 }
