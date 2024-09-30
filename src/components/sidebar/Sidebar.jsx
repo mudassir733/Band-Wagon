@@ -19,6 +19,7 @@ const Sidebar = () => {
         setOpen(!open)
     }
     return (
+
         <div className={styles.container}>
             <main className={styles.sidebar}>
                 <div className={styles.flex}>
