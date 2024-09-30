@@ -1,14 +1,44 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from "./Header.module.css"
 import Image from "next/image"
 import ellipse from '../../../public/images/Ellipse 190.svg'
 import bandwogan from '../../../public/images/BandWagon.svg'
 import search from "../../../public/images/search.svg"
+import backArro from "../../../public/arrow_back.svg"
 import profile from "../../../public/images/Profile.svg"
 import Link from "next/link"
 
 
 const Header = () => {
+
+
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [recentSearches, setRecentSearches] = useState([
+        { name: 'Allen Ruppersberg', image: '/andy.svg' },
+        { name: 'Andy Warhol', image: '/andy.svg' },
+        { name: '555 55th St N, State Zip' },
+        { name: 'BandWagon, 555 55th St N, City St...' }
+    ]);
+
+
+    const handleFocus = () => {
+        setIsExpanded(true);
+    };
+
+
+    const handleClose = () => {
+        setIsExpanded(false);
+        setSearchTerm('');
+    };
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const clearRecentSearch = (index) => {
+        setRecentSearches(recentSearches.filter((_, i) => i !== index));
+    };
     return (
         <header className={styles.header}>
             <div>
@@ -25,13 +55,46 @@ const Header = () => {
 
             </div>
             <nav className={styles.nav}>
-                <div className={styles.navbar}>
-                    <div className={styles.search_icon}>
-                        <Image src={search} alt='search icon' />
+                <div className={styles.searchContainer}>
+                    <div className={`${styles.searchBar} ${isExpanded ? styles.active : ''}`}>
+                        {isExpanded && (
+                            <span className={styles.backIcon} onClick={handleClose}>
+                                <Image src={backArro} />
+                            </span>
+                        )}
+                        {!isExpanded && (
+                            <span className={styles.searchIcon}>
+                                <Image src={search} />
+                            </span>
+                        )}
+
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            onFocus={handleFocus}
+                            placeholder="Search for Artist, Venues, or Addresses"
+                            className={styles.input}
+                        />
                     </div>
-                    <div className={styles.search_bar}>
-                        <input type="text" placeholder='Search for Artist, VEnues, or Addresses' />
-                    </div>
+
+                    {isExpanded && (
+                        <div className={styles.recentSearches}>
+                            <p className={styles.recentSearchLabel}>Recent searches</p>
+                            {recentSearches.map((search, index) => (
+                                <div key={index} className={styles.recentSearchItem}>
+                                    <div className={styles.flexSearchItem}>
+                                        {search.image && <Image src={search.image} width={40}
+                                            height={40} alt={search.name} className={styles.searchImage} />}
+                                        <span>{search.name}</span>
+                                    </div>
+                                    <button onClick={() => clearRecentSearch(index)} className={styles.clearButton}>
+                                        &times;
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </nav>
             <div className={styles.profile}>
