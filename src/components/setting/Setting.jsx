@@ -10,6 +10,9 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { IoContrast } from "react-icons/io5";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { IoIosEye } from "react-icons/io";
+import { LuSunMedium } from "react-icons/lu";
+import { FaMoon } from "react-icons/fa6";
+
 
 
 
@@ -218,9 +221,22 @@ const Setting = () => {
             case 'themes':
                 return (
                     <div className={styles.content}>
-                        <h2>Theme Settings</h2>
-                        <button onClick={() => alert('Light theme selected')}>Light Theme</button>
-                        <button onClick={() => alert('Dark theme selected')}>Dark Theme</button>
+                        <div className={styles.flex_content}>
+                            <h2>Theme</h2>
+                            <div className={`${styles.theme_btn}`}>
+                                <div>
+                                    <LuSunMedium size={24} />
+                                </div>
+                                <button onClick={() => alert('Light theme selected')}>Light Theme</button>
+                            </div>
+                            <div className={`${styles.theme_btn}`}>
+                                <div>
+                                    <FaMoon />
+                                </div>
+
+                                <button onClick={() => alert('Dark theme selected')}>Dark Theme</button>
+                            </div>
+                        </div>
                     </div>
                 );
             default:
