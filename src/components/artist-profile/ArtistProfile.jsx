@@ -27,7 +27,7 @@ const ArtistProfile = () => {
             <Header />
             <div className={styles.container}>
                 <div className={styles.mid_section}>
-                    <div className="title">
+                    <div className={styles.title}>
                         <p>andywarhool234</p>
                     </div>
                     <div className={styles.artist_profile}>
