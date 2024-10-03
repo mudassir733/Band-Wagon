@@ -18,12 +18,26 @@ import { IoIosEye } from "react-icons/io";
 const Setting = () => {
     const [activeSection, setActiveSection] = useState('changeEmail');
 
+    const [switchStates, setSwitchStates] = useState({
+        radius: false,
+        playingNearYou1: false,
+        playingNearYou2: false,
+        playingNearYou3: false,
+        playingNearYou4: false,
+    });
+
+    const toggleSwitch = (switchKey) => {
+        setSwitchStates((prevStates) => ({
+            ...prevStates,
+            [switchKey]: !prevStates[switchKey], // Toggle the specific switch
+        }));
+    };
+
     const renderContent = () => {
         switch (activeSection) {
             case 'changeEmail':
                 return (
                     <div className={styles.content}>
-                        <h2>Change email</h2>
                         <form className={styles.form}>
                             <div className={styles.heading}>
                                 <h3>Change email</h3>
@@ -60,10 +74,9 @@ const Setting = () => {
             case 'changePassword':
                 return (
                     <div className={styles.content}>
-                        <h2>Change password</h2>
                         <form className={styles.form}>
                             <div className={styles.heading}>
-                                <h3>Change email</h3>
+                                <h3>Change Password</h3>
                             </div>
                             <div className={styles.input_box}>
                                 <div>
@@ -105,7 +118,6 @@ const Setting = () => {
             case 'deleteAccount':
                 return (
                     <div className={styles.content}>
-                        <h2>Delete Account</h2>
                         <form className={styles.form}>
                             <div className={styles.heading}>
                                 <h3>Delete Account</h3>
@@ -141,14 +153,66 @@ const Setting = () => {
             case 'notifications':
                 return (
                     <div className={styles.content}>
-                        <h2>Notification Settings</h2>
-                        <label>
-                            <input type="checkbox" /> Receive email notifications
-                        </label>
-                        <label>
-                            <input type="checkbox" /> Receive push notifications
-                        </label>
-                        <button type="submit">Save changes</button>
+                        <div className={styles.flex_content}>
+                            <h2>Notification</h2>
+                            <div className={styles.flex_notification}>
+                                <p>Playing near you now</p>
+                                <div
+                                    className={`${styles.switch} ${switchStates.radius ? styles.switchOn : styles.switchOff}`}
+                                    onClick={() => toggleSwitch('radius')}
+                                >
+                                    <div
+                                        className={`${styles.circle} ${switchStates.radius ? styles.circleOn : styles.circleOff}`}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.flex_notification}>
+                                <p>Radius</p>
+                                <div>
+                                    <div>
+                                        <button>15 miles</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.flex_notification}>
+                                <p>Weekly show lineup</p>
+                                <div
+                                    className={`${styles.switch} ${switchStates.playingNearYou2 ? styles.switchOn : styles.switchOff}`}
+                                    onClick={() => toggleSwitch('playingNearYou2')}
+                                >
+                                    <div
+                                        className={`${styles.circle} ${switchStates.playingNearYou2 ? styles.circleOn : styles.circleOff}`}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.flex_notification}>
+                                <p>Saved show reminders</p>
+                                <div
+                                    className={`${styles.switch} ${switchStates.playingNearYou3 ? styles.switchOn : styles.switchOff}`}
+                                    onClick={() => toggleSwitch('playingNearYou3')}
+                                >
+                                    <div
+                                        className={`${styles.circle} ${switchStates.playingNearYou3 ? styles.circleOn : styles.circleOff}`}
+                                    />
+                                </div>
+                            </div>
+                            <div className={styles.flex_notification}>
+                                <p>Marketing emails</p>
+                                <div
+                                    className={`${styles.switch} ${switchStates.playingNearYou4 ? styles.switchOn : styles.switchOff}`}
+                                    onClick={() => toggleSwitch('playingNearYou4')}
+                                >
+                                    <div
+                                        className={`${styles.circle} ${switchStates.playingNearYou4 ? styles.circleOn : styles.circleOff}`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                 );
             case 'themes':

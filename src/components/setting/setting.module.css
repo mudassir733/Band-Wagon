@@ -18,6 +18,7 @@
     height: fit-content;
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
+    gap: 60px;
 }
 
 .topHeader {
@@ -122,6 +123,28 @@
     height: 100vh;
 }
 
+.content h2 {
+    color: var(--Secondary-White, #FFF);
+    text-align: center;
+    font-family: var(--lato-regular);
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: -0.56px;
+}
+
+.flex_content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.flex_content h2 {
+    text-align: left;
+    padding-bottom: 48px;
+}
+
 .form {
     display: inline-flex;
     flex-direction: column;
@@ -171,6 +194,34 @@
     color: #525252;
 }
 
+.flex_notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-bottom: 16px;
+}
+
+.flex_notification p {
+    color: var(--white-color);
+    font-family: var(--lato-regular);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.flex_notification button {
+    display: flex;
+    height: 26px;
+    padding: 8px 13px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 100px;
+    border: 1px solid #FFF8F8;
+}
+
 .btn {
     display: flex;
     padding: 10px 24px;
@@ -194,4 +245,55 @@
 
 .label {
     margin-bottom: 10px;
+}
+
+
+
+
+/* Switch button */
+.switch {
+    width: 50px;
+    height: 20px;
+    border-radius: 30px;
+    background-color: #4d4d4d;
+    /* Default background (off state) */
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.switchOn {
+    background-color: var(--primary-color);
+    /* Background color for on state */
+}
+
+.switchOff {
+    background-color: #FFFFFF61;
+    /* Background color for off state */
+}
+
+.circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    /* Default circle color */
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.circleOn {
+    transform: translateX(30px);
+    /* Move circle to the right when switched on */
+    background-color: #00ff5f;
+    /* Circle color for on state */
+}
+
+.circleOff {
+    transform: translateX(0);
+    /* Circle remains on the left (off state) */
+    background-color: #bfbfbf;
+    /* Circle color for off state */
 }
