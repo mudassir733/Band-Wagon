@@ -237,13 +237,14 @@ h6 {
   letter-spacing: -0.72px;
 }
 
-.heading-2-medium {
+.heading_2_medium {
   font-family: var(--lato-regular);
   font-size: 36px;
   font-style: normal;
   font-weight: 600;
   line-height: 44px;
   letter-spacing: -0.72px;
+  color: var(--white-color);
 }
 
 .heading-2-bold {
@@ -266,24 +267,25 @@ h6 {
 
 /* ---------Heading 3--------- */
 
-.heading-3-regular {
+.heading_3_regular {
   font-family: var(--lato-regular);
   font-size: 32px;
   font-style: normal;
   font-weight: 500;
   line-height: 40px;
-  /* 125% */
   letter-spacing: -0.64px;
+  color: var(--white-color);
 }
 
-.heading-3-medium {
+.heading_3_medium {
   font-family: var(--lato-regular);
-  font-size: 32px;
+  font-size: 28px;
   font-style: normal;
   font-weight: 600;
   line-height: 40px;
   /* 125% */
   letter-spacing: -0.64px;
+  color: var(--white-color);
 }
 
 
@@ -344,22 +346,24 @@ h6 {
 }
 
 /* --------Heading 5--------- */
-.heading-5-regular {
+.heading_5_regular {
   font-family: var(--lato-regular);
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
   line-height: 32px;
   letter-spacing: -0.48px;
+  color: var(--white-color);
 }
 
-.heading-5-medium {
+.heading_5_medium {
   font-family: var(--lato-regular);
   font-size: 24px;
   font-style: normal;
   font-weight: 600;
   line-height: 32px;
   letter-spacing: -0.48px;
+  color: var(--white-color);
 }
 
 .heading-5-bold {
@@ -382,13 +386,14 @@ h6 {
 
 
 /* ---------Heading 6--------- */
-.heading-6-regular {
+.heading_6_regular {
   font-family: var(--lato-regular);
   font-size: 20px;
   font-style: normal;
   font-weight: 500;
   line-height: 28px;
   letter-spacing: -0.4px;
+  color: var(--white-color);
 }
 
 .heading-6-medium {
@@ -438,7 +443,7 @@ h6 {
 }
 
 /* -------Paragraph Medium------ */
-.p-medium-regula {
+.p_medium_regula {
   color: var(--black-color);
   font-family: var(--lato-regular);
   font-size: 16px;
@@ -447,8 +452,8 @@ h6 {
   line-height: 24px;
 }
 
-.p-medium {
-  color: var(--black-color);
+.p_medium {
+  color: var(--white-color);
   font-family: var(--lato-regular);
   font-size: 16px;
   font-style: normal;
@@ -457,8 +462,8 @@ h6 {
 }
 
 /* --------Paragraph Samll--------- */
-.p-small-regular {
-  color: var(--black-color);
+.p_small_regular {
+  color: var(--white-color);
   font-family: var(--lato-regular);
   font-size: 14px;
   font-style: normal;
@@ -477,19 +482,19 @@ h6 {
 
 
 /* -------Paragraph X Small-------- */
-.p-x-regular {
+.p_x_regular {
   font-family: var(--lato-regular);
   font-size: 12px;
-  color: var(--black-color);
+  color: #A3A3A3;
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
 }
 
-.p-x-medium {
+.p_x_medium {
   font-family: var(--lato-regular);
   font-size: 12px;
-  color: var(--black-color);
+  color: #A3A3A3;
   font-style: normal;
   font-weight: 500;
   line-height: 20px;
