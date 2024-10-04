@@ -277,14 +277,15 @@ h6 {
   color: var(--white-color);
 }
 
-.heading-3-medium {
+.heading_3_medium {
   font-family: var(--lato-regular);
-  font-size: 32px;
+  font-size: 28px;
   font-style: normal;
   font-weight: 600;
   line-height: 40px;
   /* 125% */
   letter-spacing: -0.64px;
+  color: var(--white-color);
 }
 
 
@@ -345,22 +346,24 @@ h6 {
 }
 
 /* --------Heading 5--------- */
-.heading-5-regular {
+.heading_5_regular {
   font-family: var(--lato-regular);
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
   line-height: 32px;
   letter-spacing: -0.48px;
+  color: var(--white-color);
 }
 
-.heading-5-medium {
+.heading_5_medium {
   font-family: var(--lato-regular);
   font-size: 24px;
   font-style: normal;
   font-weight: 600;
   line-height: 32px;
   letter-spacing: -0.48px;
+  color: var(--white-color);
 }
 
 .heading-5-bold {
@@ -383,13 +386,14 @@ h6 {
 
 
 /* ---------Heading 6--------- */
-.heading-6-regular {
+.heading_6_regular {
   font-family: var(--lato-regular);
   font-size: 20px;
   font-style: normal;
   font-weight: 500;
   line-height: 28px;
   letter-spacing: -0.4px;
+  color: var(--white-color);
 }
 
 .heading-6-medium {
