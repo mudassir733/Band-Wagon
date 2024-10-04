@@ -237,13 +237,14 @@ h6 {
   letter-spacing: -0.72px;
 }
 
-.heading-2-medium {
+.heading_2_medium {
   font-family: var(--lato-regular);
   font-size: 36px;
   font-style: normal;
   font-weight: 600;
   line-height: 44px;
   letter-spacing: -0.72px;
+  color: var(--white-color);
 }
 
 .heading-2-bold {
@@ -266,14 +267,14 @@ h6 {
 
 /* ---------Heading 3--------- */
 
-.heading-3-regular {
+.heading_3_regular {
   font-family: var(--lato-regular);
   font-size: 32px;
   font-style: normal;
   font-weight: 500;
   line-height: 40px;
-  /* 125% */
   letter-spacing: -0.64px;
+  color: var(--white-color);
 }
 
 .heading-3-medium {
@@ -447,8 +448,8 @@ h6 {
   line-height: 24px;
 }
 
-.p-medium {
-  color: var(--black-color);
+.p_medium {
+  color: var(--white-color);
   font-family: var(--lato-regular);
   font-size: 16px;
   font-style: normal;
