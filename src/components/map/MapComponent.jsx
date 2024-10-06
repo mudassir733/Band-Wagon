@@ -35,12 +35,12 @@ const MapComponent = () => {
         },
     ];
 
-    // Use the useJsApiLoader hook to ensure the maps API is loaded
+
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     });
 
-    // Function to fetch place details
+
     const getPlaceDetails = async () => {
         const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
         const { Place } = await google.maps.importLibrary('places');
@@ -57,14 +57,14 @@ const MapComponent = () => {
         console.log('Place Name:', place.displayName);
         console.log('Address:', place.formattedAddress);
 
-        // Set place details to state
+
         setPlaceDetails({
             displayName: place.displayName,
             formattedAddress: place.formattedAddress,
             location: place.location,
         });
 
-        // Add an advanced marker if needed
+
         new AdvancedMarkerElement({
             map: mapRef.current,
             position: place.location,
@@ -72,15 +72,15 @@ const MapComponent = () => {
         });
     };
 
-    // UseEffect hook to load place details once the map is ready
+
     useEffect(() => {
-        // Move the check inside the useEffect to prevent hook issues
+
         if (isLoaded && google && google.maps && mapRef.current) {
             getPlaceDetails();
         }
-    }, [isLoaded]);  // Only rerun the effect when `isLoaded` changes
+    }, [isLoaded]);
 
-    // Function to return the correct marker icon
+
     const getIcon = (iconType) => {
         if (iconType === 'person') {
             return {
