@@ -109,7 +109,7 @@ const MapComponent = () => {
             mapContainerClassName={styles.map_container}
             center={{ lat: 48.7774, lng: 19.2451 }}
             zoom={8}
-            mapTypeId='terrain'
+            mapTypeId='roadmap'
             onLoad={(map) => (mapRef.current = map)}  // Store map reference
         >
 
