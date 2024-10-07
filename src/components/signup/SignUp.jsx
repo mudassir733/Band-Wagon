@@ -11,44 +11,81 @@ import styles from "./styles.module.css"
 import FilledButton from "../../components/buttons/FilledButton"
 import backArrow from "../../../public/images/arrow_back.svg"
 import Link from 'next/link';
+import { useFormik } from "formik"
+import { schema } from "../../schema/schema"
+import { ToastContainer, toast } from 'react-toastify'
+
 
 const SignUp = () => {
 
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
+  const formik = useFormik({
+    initialValues: { username: '', email: '', password: '' },
+    validationSchema: schema,
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: async (values, { setSubmitting }) => {
+      setError('');
+      setSuccess('');
+      setSubmitting(true);
 
-  const handleSignUp = async (e) => {
+      try {
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        });
+
+        if (response.status === 201) {
+          setSuccess("User created successfully!");
+          toast.success("user created successfully!");
+        } else {
+          const errorMessage = await response.text();
+
+          if (errorMessage.includes("The email already exists")) {
+
+            toast.error("User with this email already exists!")
+          } else {
+            toast.error(errorMessage);
+          }
+        }
+      } catch (error) {
+        setError('An unexpected error occurred. Please try again.');
+        toast.error('An unexpected error occurred. Please try again.');
+      } finally {
+        setSubmitting(false);
+      }
+    }
+  });
+
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    setError('');
-    setSuccess('');
 
-    try {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, email, password })
+    const isValid = await formik.validateForm();
+
+    if (Object.keys(isValid).length === 0) {
+      formik.handleSubmit();
+    } else {
+      formik.setTouched({
+        username: true,
+        email: true,
+        password: true,
       });
-
-      if (response.status === 201) {
-        setSuccess("User created successfully!");
-      } else {
-        const errorMessage = await response.text();
-        setError(errorMessage);
-      }
-    } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
     }
   };
 
+
+
+
+
   return (
     <section className={styles.section}>
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover draggable />
       <div className={styles.row}>
         <div className={styles.left_col}>
           <Link href="/login" className={styles.box}>
@@ -67,45 +104,63 @@ const SignUp = () => {
 
           <main className={styles.main}>
             <h1 className={styles.title}>Create an account</h1>
-            <form className={styles.form} onSubmit={handleSignUp}>
+            <form className={styles.form} onSubmit={handleFormSubmit}>
               <div className={styles.inputField}>
                 <Image src={user} alt='User' />
                 <input
                   type="text"
                   placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  name="username"
+                  value={formik.values.username}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className={styles.input}
                   required
+                  autoComplete='off'
                 />
+
+                {formik.errors.username && formik.touched.username && (
+                  <p className={styles.error}>{formik.errors.username}</p>
+                )}
               </div>
               <div className={styles.inputField}>
                 <Image src={mail} alt='Mail' />
                 <input
-                  type="email"
+                  type="text"
                   placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className={styles.input}
                   required
+                  autoComplete='off'
                 />
+
+                {formik.errors.username && formik.touched.email && (
+                  <p className={styles.error}>{formik.errors.email}</p>
+                )}
               </div>
               <div className={styles.inputField}>
                 <Image src={lock} alt='Lock' />
                 <input
                   type="password"
                   placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className={styles.input}
                   required
+                  autoComplete='off'
                 />
+                {formik.errors.username && formik.touched.password && (
+                  <p className={styles.error}>{formik.errors.password}</p>
+                )}
               </div>
-              <button className={styles.signUpButton} type="submit">Sign Up</button>
+              <button className={styles.signUpButton} type="submit" disabled={formik.isSubmitting}>Sign Up</button>
             </form>
 
-            {error && <p className={styles.error}>{error}</p>}
-            {success && <p className={styles.success}>{success}</p>}
 
             <div className={styles.orContainer}>
               <div className={styles.line1}></div>
