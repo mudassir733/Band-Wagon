@@ -13,13 +13,21 @@ import backArrow from "../../../public/images/arrow_back.svg"
 import Link from 'next/link';
 import { useFormik } from "formik"
 import { schema } from "../../schema/schema"
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
+import { GoEye } from "react-icons/go";
+import { GoEyeClosed } from "react-icons/go";
+
 
 
 const SignUp = () => {
 
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword)
+  }
 
   const formik = useFormik({
     initialValues: { username: '', email: '', password: '' },
@@ -80,12 +88,8 @@ const SignUp = () => {
   };
 
 
-
-
-
   return (
     <section className={styles.section}>
-      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover draggable />
       <div className={styles.row}>
         <div className={styles.left_col}>
           <Link href="/login" className={styles.box}>
@@ -144,7 +148,7 @@ const SignUp = () => {
               <div className={styles.inputField}>
                 <Image src={lock} alt='Lock' />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   name="password"
                   value={formik.values.password}
@@ -154,6 +158,8 @@ const SignUp = () => {
                   required
                   autoComplete='off'
                 />
+
+                {showPassword ? <GoEye onClick={handleShowPassword} size={24} color='#737373' /> : <GoEyeClosed onClick={handleShowPassword} size={24} color='#737373' />}
                 {formik.errors.username && formik.touched.password && (
                   <p className={styles.error}>{formik.errors.password}</p>
                 )}
