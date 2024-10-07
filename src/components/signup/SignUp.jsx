@@ -16,6 +16,7 @@ import { schema } from "../../schema/schema"
 import { toast } from 'react-toastify'
 import { GoEye } from "react-icons/go";
 import { GoEyeClosed } from "react-icons/go";
+import { signIn } from 'next-auth/react';
 
 
 
@@ -175,7 +176,7 @@ const SignUp = () => {
             </div>
 
             <div className={styles.loginButtons}>
-              <button className={`${styles.button} ${styles.googleButton}`}>
+              <button className={`${styles.button} ${styles.googleButton}`} onClick={() => signIn('google', { callbackUrl: '/' })}>
                 <Image src={google} /> Sign up with Google
               </button>
               <button className={`${styles.button} ${styles.facebookButton}`}>
