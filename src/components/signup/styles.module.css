@@ -97,11 +97,12 @@
     gap: 8px;
     border-radius: 100px;
     border: 1px solid #272727;
+    position: relative;
 
 }
 
 .section .row .right_col .main form .inputField input {
-    background-color: transparent;
+    background-color: transparent !important;
     outline: none;
     color: #737373 !important;
     width: 100%;
@@ -185,4 +186,11 @@
     background: #000;
     color: var(--white-color);
 
+}
+
+.error {
+    color: #df2f2f;
+    position: absolute;
+    bottom: -24px;
+    font-family: var(--lato-regular);
 }
