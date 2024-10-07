@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import google from "../../../public/images/google.svg"
 import facebook from "../../../public/images/facebook.svg"
@@ -16,12 +16,14 @@ import { schema } from "../../schema/schema"
 import { toast } from 'react-toastify'
 import { GoEye } from "react-icons/go";
 import { GoEyeClosed } from "react-icons/go";
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from "next/navigation"
 
 
 
 const SignUp = () => {
-
+  const { data: session, status } = useSession();
+  const router = useRouter()
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -39,6 +41,8 @@ const SignUp = () => {
       setError('');
       setSuccess('');
       setSubmitting(true);
+
+
 
       try {
         const response = await fetch('/api/signup', {
@@ -87,6 +91,21 @@ const SignUp = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (session) {
+      router.push("/")
+    }
+  }, [session, router])
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (session) {
+    return null;
+  }
+
 
 
   return (
