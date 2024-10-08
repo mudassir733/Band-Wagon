@@ -56,6 +56,7 @@ const SignUp = () => {
         if (response.status === 201) {
           setSuccess("User created successfully!");
           toast.success("user created successfully!");
+          router.push("/login")
         } else {
           const errorMessage = await response.text();
 

@@ -13,7 +13,7 @@ const AuthChecker = ({ children }) => {
   useEffect(() => {
     if (status === "loading") return;
     if (!session) {
-      router.push("/login");
+      router.push("/onboarding");
     }
   }, [session, router, status]);
 

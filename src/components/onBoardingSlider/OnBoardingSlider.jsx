@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 const slides = [
   {
@@ -29,12 +30,15 @@ const slides = [
 
 export default function OnboardingSlider() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const router = useRouter()
 
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))
-
-
+    if (currentSlide === slides.length - 1) {
+      router.push("/signup");
+    } else {
+      setCurrentSlide((prev) => prev + 1);
+    }
   }
 
   return (
