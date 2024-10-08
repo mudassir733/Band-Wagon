@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signIn, useSession } from 'next-auth/react';
@@ -13,64 +13,71 @@ import FilledButton from "../buttons/FilledButton";
 import backArrow from "../../../public/images/arrow_back.svg";
 import Link from 'next/link';
 import { toast } from 'react-toastify';
+import { useFormik } from "formik";
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object({
+    email: Yup.string()
+        .email('Invalid email address')
+        .required('Email is required'),
+    password: Yup.string()
+        .min(6, 'Password must be at least 6 characters long')
+        .required('Password is required'),
+});
 
 const Login = () => {
-    const { data: session, status } = useSession()
+    const { data: session, status } = useSession();
     const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: ''
+        },
+        validationSchema: validationSchema,
+        onSubmit: async (values, { setSubmitting }) => {
+            setSubmitting(true);
+            const { email, password } = values;
 
-        if (!email || !password) {
-            toast.error("Please provide both email and password.");
-            setIsSubmitting(false);
-            return;
-        }
+            try {
+                const result = await signIn('credentials', {
+                    redirect: false,
+                    email,
+                    password,
+                });
 
-        try {
-            const result = await signIn('credentials', {
-                redirect: false,
-                email,
-                password,
-            });
-
-            if (result.error) {
-                toast.error(result.error || 'Login failed. Please try again.');
-            } else {
-                toast.success("Logged in successfully!");
-                router.push('/');
+                if (result.error) {
+                    toast.error(result.error || 'Login failed. Please try again.');
+                } else {
+                    toast.success("Logged in successfully!");
+                    router.push('/'); // Redirect to home page on successful login
+                }
+            } catch (error) {
+                console.error("Error during login:", error.message);
+                toast.error("An error occurred. Please try again.");
+            } finally {
+                setSubmitting(false);
             }
-        } catch (error) {
-            console.error("Error during login:", error.message);
-            toast.error("An error occurred. Please try again.");
-        } finally {
-            setIsSubmitting(false);
         }
-    };
+    });
 
     const handleGoogleLogin = () => {
         signIn('google', { callbackUrl: '/' });
     };
 
-
     useEffect(() => {
         if (session) {
-            router.push("/")
+            router.push("/");
         }
-    }, [session, router])
-    if (status === "loading") {
-        return <p>Loading...</p>
+    }, [session, router]);
 
+    if (status === "loading") {
+        return <p>Loading...</p>;
     }
 
     if (session) {
         return null;
     }
-
 
     return (
         <section className={styles.section}>
@@ -92,17 +99,18 @@ const Login = () => {
 
                     <main className={styles.main}>
                         <h1 className={styles.title}>Sign In to BandWagon</h1>
-                        <form className={styles.form} onSubmit={handleSubmit}>
+                        <form className={styles.form} onSubmit={formik.handleSubmit}>
                             <div className={styles.inputField}>
                                 <Image src={mail} alt='Mail' />
                                 <input
                                     type="email"
                                     placeholder="Email"
                                     className={styles.input}
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
+                                    {...formik.getFieldProps('email')}
                                 />
+                                {formik.touched.email && formik.errors.email ? (
+                                    <p className={styles.error}>{formik.errors.email}</p>
+                                ) : null}
                             </div>
                             <div className={styles.inputField}>
                                 <Image src={lock} alt='Lock' />
@@ -110,17 +118,18 @@ const Login = () => {
                                     type="password"
                                     placeholder="Password"
                                     className={styles.input}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
+                                    {...formik.getFieldProps('password')}
                                 />
+                                {formik.touched.password && formik.errors.password ? (
+                                    <p className={styles.error}>{formik.errors.password}</p>
+                                ) : null}
                             </div>
                             <button
                                 className={styles.signUpButton}
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={formik.isSubmitting}
                             >
-                                {isSubmitting ? 'Signing In...' : 'Sign In'}
+                                {formik.isSubmitting ? 'Signing In...' : 'Sign In'}
                             </button>
                         </form>
                         <div className={styles.orContainer}>

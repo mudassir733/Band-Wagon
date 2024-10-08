@@ -95,7 +95,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 25px;
 }
 
 .section .row .right_col .main form .inputField {
@@ -107,6 +107,7 @@
     gap: 8px;
     border-radius: 100px;
     border: 1px solid #272727;
+    position: relative;
 
 }
 
@@ -195,4 +196,11 @@
     background: #000;
     color: var(--white-color);
 
+}
+
+.error {
+    color: #df2f2f;
+    position: absolute;
+    bottom: -24px;
+    font-family: var(--lato-regular);
 }

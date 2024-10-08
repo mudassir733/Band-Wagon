@@ -1,36 +1,33 @@
-"use client"
-import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
-import google from "../../../public/images/google.svg"
-import facebook from "../../../public/images/facebook.svg"
-import apple from "../../../public/images/apple.svg"
-import user from "../../../public/images/person.svg"
-import mail from "../../../public/images/mail.svg"
-import lock from "../../../public/images/lock.svg"
-import styles from "./styles.module.css"
-import FilledButton from "../../components/buttons/FilledButton"
-import backArrow from "../../../public/images/arrow_back.svg"
+"use client";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import google from "../../../public/images/google.svg";
+import facebook from "../../../public/images/facebook.svg";
+import apple from "../../../public/images/apple.svg";
+import user from "../../../public/images/person.svg";
+import mail from "../../../public/images/mail.svg";
+import lock from "../../../public/images/lock.svg";
+import styles from "./styles.module.css";
+import FilledButton from "../../components/buttons/FilledButton";
+import backArrow from "../../../public/images/arrow_back.svg";
 import Link from 'next/link';
-import { useFormik } from "formik"
-import { schema } from "../../schema/schema"
-import { toast } from 'react-toastify'
-import { GoEye } from "react-icons/go";
-import { GoEyeClosed } from "react-icons/go";
+import { useFormik } from "formik";
+import { schema } from "../../schema/schema";
+import { toast } from 'react-toastify';
+import { GoEye, GoEyeClosed } from "react-icons/go";
 import { signIn, useSession } from 'next-auth/react';
-import { useRouter } from "next/navigation"
-
-
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const { data: session, status } = useSession();
-  const router = useRouter()
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   const formik = useFormik({
     initialValues: { username: '', email: '', password: '' },
@@ -41,8 +38,6 @@ const SignUp = () => {
       setError('');
       setSuccess('');
       setSubmitting(true);
-
-
 
       try {
         const response = await fetch('/api/signup', {
@@ -55,14 +50,13 @@ const SignUp = () => {
 
         if (response.status === 201) {
           setSuccess("User created successfully!");
-          toast.success("user created successfully!");
-          router.push("/login")
+          toast.success("User created successfully!");
+          router.push("/login");
         } else {
           const errorMessage = await response.text();
 
           if (errorMessage.includes("The email already exists")) {
-
-            toast.error("User with this email already exists!")
+            toast.error("User with this email already exists!");
           } else {
             toast.error(errorMessage);
           }
@@ -71,19 +65,17 @@ const SignUp = () => {
         setError('An unexpected error occurred. Please try again.');
         toast.error('An unexpected error occurred. Please try again.');
       } finally {
-        setSubmitting(false);
+        setSubmitting(false); // Ensure this is reached
       }
-    }
+    },
   });
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
-
     const isValid = await formik.validateForm();
 
     if (Object.keys(isValid).length === 0) {
-      formik.handleSubmit();
+      formik.handleSubmit(); // Calls the Formik onSubmit
     } else {
       formik.setTouched({
         username: true,
@@ -95,9 +87,9 @@ const SignUp = () => {
 
   useEffect(() => {
     if (session) {
-      router.push("/")
+      router.push("/");
     }
-  }, [session, router])
+  }, [session, router]);
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -106,8 +98,6 @@ const SignUp = () => {
   if (session) {
     return null;
   }
-
-
 
   return (
     <section className={styles.section}>
@@ -143,7 +133,6 @@ const SignUp = () => {
                   required
                   autoComplete='off'
                 />
-
                 {formik.errors.username && formik.touched.username && (
                   <p className={styles.error}>{formik.errors.username}</p>
                 )}
@@ -161,8 +150,8 @@ const SignUp = () => {
                   required
                   autoComplete='off'
                 />
-
-                {formik.errors.username && formik.touched.email && (
+                {/* Corrected error display */}
+                {formik.errors.email && formik.touched.email && (
                   <p className={styles.error}>{formik.errors.email}</p>
                 )}
               </div>
@@ -179,15 +168,19 @@ const SignUp = () => {
                   required
                   autoComplete='off'
                 />
-
-                {showPassword ? <GoEye onClick={handleShowPassword} size={24} color='#737373' /> : <GoEyeClosed onClick={handleShowPassword} size={24} color='#737373' />}
-                {formik.errors.username && formik.touched.password && (
+                {showPassword ? (
+                  <GoEye onClick={handleShowPassword} size={24} color='#737373' />
+                ) : (
+                  <GoEyeClosed onClick={handleShowPassword} size={24} color='#737373' />
+                )}
+                {formik.errors.password && formik.touched.password && (
                   <p className={styles.error}>{formik.errors.password}</p>
                 )}
               </div>
-              <button className={styles.signUpButton} type="submit" disabled={formik.isSubmitting}>Sign Up</button>
+              <button className={styles.signUpButton} type="submit" disabled={formik.isSubmitting}>
+                {formik.isSubmitting ? "Signing In..." : "Sign Up"}
+              </button>
             </form>
-
 
             <div className={styles.orContainer}>
               <div className={styles.line1}></div>
@@ -197,20 +190,20 @@ const SignUp = () => {
 
             <div className={styles.loginButtons}>
               <button className={`${styles.button} ${styles.googleButton}`} onClick={() => signIn('google', { callbackUrl: '/' })}>
-                <Image src={google} /> Sign up with Google
+                <Image src={google} alt="Google logo" /> Sign up with Google
               </button>
               <button className={`${styles.button} ${styles.facebookButton}`}>
-                <Image src={facebook} /> Sign up with Facebook
+                <Image src={facebook} alt="Facebook logo" /> Sign up with Facebook
               </button>
               <button className={`${styles.button} ${styles.appleButton}`}>
-                <Image src={apple} />Sign up with Apple
+                <Image src={apple} alt="Apple logo" /> Sign up with Apple
               </button>
             </div>
           </main>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default SignUp;
