@@ -1,12 +1,16 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import styles from "./onboarding.module.css"
+
 
 const slides = [
+
   {
     title: (
       <>
@@ -29,6 +33,7 @@ const slides = [
 ]
 
 export default function OnboardingSlider() {
+  const { data: session, status } = useSession()
   const [currentSlide, setCurrentSlide] = useState(0)
   const router = useRouter()
 
@@ -41,9 +46,25 @@ export default function OnboardingSlider() {
     }
   }
 
+  // useEffect(() => {
+  //   if (session) {
+  //     router.push("/");
+  //   }
+  // }, [router, session])
+
+  // if (status === "loading") {
+  //   return <p>Loading...</p>
+  // }
+
+  // if (session) {
+  //   return null
+  // }
+
+
+
   return (
-    <div className="bg-[#121212] w-full h-screen flex items-center overflow-hidden">
-      <div className="w-full flex gap-[132px] items-center justify-center">
+    <div className={`${"bg-[#121212] w-full h-screen flex items-center overflow-hidden"} ${styles.container}`} >
+      <div className={`${"w-full flex gap-[132px] items-center justify-center"} ${styles.row}`}>
         <motion.div key={currentSlide}
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -70,10 +91,10 @@ export default function OnboardingSlider() {
             className="text-white p-8 "
           >
 
-            <div className='flex flex-col gap-[18px] w-[379px]'>
-              <h2 className="text-white text-[40px] font-bold font-['Lato'] leading-[48px]">{slides[currentSlide].title}</h2>
-              <p className="w-[376px] text-neutral-400 text-[28px] font-medium font-['Lato'] leading-[34px]">{slides[currentSlide].description}</p>
-              <div className="flex justify-between items-center pt-[30px]">
+            <div className={`${"flex flex-col gap-[18px] w-[379px]"} ${styles.right_col}`}>
+              <h2 className={`${"text-white text-[40px] font-bold font-['Lato'] leading-[48px]"} ${styles.heading}`}>{slides[currentSlide].title}</h2>
+              <p className={`${"w-[376px] text-neutral-400 text-[28px] font-medium font-['Lato'] leading-[34px]"} ${styles.text}`}>{slides[currentSlide].description}</p>
+              <div className={`${"flex justify-between items-center pt-[30px]"} ${styles.button_box}`}>
                 <div className="flex space-x-2">
                   {slides.map((_, index) => (
                     <div
@@ -96,6 +117,6 @@ export default function OnboardingSlider() {
           </motion.div>
         </AnimatePresence>
       </div>
-    </div>
+    </ div>
   )
 }
