@@ -70,6 +70,7 @@
     gap: 16px;
     font-family: var(--lato-regular);
     color: var(--white-color);
+    cursor: pointer;
 }
 
 .container .sidebar .subSidebar .flex .subRow .explore {

@@ -8,6 +8,7 @@ import setting from "../../../public/images/settings.svg"
 import move from "../../../public/images/move_item.svg"
 import chevron from "../../../public/images/chevron_right.svg"
 import chevronLeft from "../../../public/images/chevron_left.svg"
+import { signOut } from 'next-auth/react'
 
 
 
@@ -66,7 +67,7 @@ const Sidebar = () => {
                             <Image src={setting} />
                             <p>Setting</p>
                         </div>
-                        <div className={styles.subRow}>
+                        <div className={styles.subRow} onClick={() => signOut({ callbackUrl: "/onboarding" })}>
                             <Image src={move} />
                             <p>Log out</p>
                         </div>

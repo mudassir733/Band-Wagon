@@ -65,7 +65,7 @@ const SignUp = () => {
         setError('An unexpected error occurred. Please try again.');
         toast.error('An unexpected error occurred. Please try again.');
       } finally {
-        setSubmitting(false); // Ensure this is reached
+        setSubmitting(false);
       }
     },
   });
@@ -75,7 +75,7 @@ const SignUp = () => {
     const isValid = await formik.validateForm();
 
     if (Object.keys(isValid).length === 0) {
-      formik.handleSubmit(); // Calls the Formik onSubmit
+      formik.handleSubmit();
     } else {
       formik.setTouched({
         username: true,
@@ -150,7 +150,7 @@ const SignUp = () => {
                   required
                   autoComplete='off'
                 />
-                {/* Corrected error display */}
+
                 {formik.errors.email && formik.touched.email && (
                   <p className={styles.error}>{formik.errors.email}</p>
                 )}
