@@ -204,3 +204,31 @@
     bottom: -24px;
     font-family: var(--lato-regular);
 }
+
+
+@media screen and (max-width: 769px) {
+    .section {
+        height: fit-content;
+        padding: 0;
+    }
+
+    .section .row {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 141px;
+    }
+
+    .section .row .left_col {
+        width: 100%;
+        height: 100vh;
+    }
+
+    .section .row .right_col .main {
+        width: 100%;
+    }
+
+    .arrow {
+        display: none;
+    }
+
+}

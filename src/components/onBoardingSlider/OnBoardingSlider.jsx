@@ -46,19 +46,19 @@ export default function OnboardingSlider() {
     }
   }
 
-  // useEffect(() => {
-  //   if (session) {
-  //     router.push("/");
-  //   }
-  // }, [router, session])
+  useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+  }, [router, session])
 
-  // if (status === "loading") {
-  //   return <p>Loading...</p>
-  // }
+  if (status === "loading") {
+    return <p>Loading...</p>
+  }
 
-  // if (session) {
-  //   return null
-  // }
+  if (session) {
+    return null
+  }
 
 
 

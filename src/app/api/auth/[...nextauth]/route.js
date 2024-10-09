@@ -37,6 +37,7 @@ const handler = NextAuth({
                     id: user._id,
                     name: user.username,
                     email: user.email,
+                    profileImage: user.profileImage || null,
                 };
             },
         }),
@@ -51,33 +52,42 @@ const handler = NextAuth({
     },
     callbacks: {
         async jwt({ token, user }) {
-
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
+                token.profileImage = user.image || null;
             }
             return token;
         },
         async session({ session, token }) {
-
             session.user.id = token.id;
             session.user.email = token.email;
+            session.user.profileImage = token.profileImage;
             return session;
         },
-        async signIn({ user, account }) {
+        async signIn({ user, account, profile }) {
             try {
                 await connect();
 
                 const existingUser = await User.findOne({ email: user.email });
 
+
+                const profileImage = account.provider === 'google' ? user.image : null;
+
                 if (!existingUser) {
                     const newUser = new User({
                         username: user.name || `user_${account.providerAccountId}`,
+                        name: profile.name,
                         email: user.email,
                         googleId: account.providerAccountId,
+                        profileImage,
+                        location: profile.location || "",
                     });
 
                     await newUser.save();
+                } else if (account.provider === 'google' && !existingUser.profileImage) {
+                    existingUser.profileImage = user.image;
+                    await existingUser.save();
                 }
 
                 return true;

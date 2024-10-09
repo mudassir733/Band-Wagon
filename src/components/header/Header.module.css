@@ -121,3 +121,7 @@
     font-size: 18px;
     cursor: pointer;
 }
+
+.profile {
+    border-radius: 50px;
+}
