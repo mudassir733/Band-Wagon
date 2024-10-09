@@ -9,11 +9,15 @@ import move from "../../../public/images/move_item.svg"
 import chevron from "../../../public/images/chevron_right.svg"
 import chevronLeft from "../../../public/images/chevron_left.svg"
 import { signOut } from 'next-auth/react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 
 
 
 const Sidebar = () => {
+    const pathname = usePathname()
+
     const [open, setOpen] = useState(false)
 
     const handleOpen = () => {
@@ -24,22 +28,33 @@ const Sidebar = () => {
         <div className={styles.container}>
             <main className={styles.sidebar}>
                 <div className={styles.flex}>
-                    <div className={styles.location}>
-                        <Image src={locationImg} alt="location img" />
-                    </div>
-                    <div className={styles.person}>
-                        <Image src={person1} />
-                    </div>
-                    <div className={styles.notification}>
-                        <Image src={notification} />
-                    </div>
+
+                    <Link href="/">
+                        <div className={pathname === "/" ? styles.active_bg : ""}>
+                            <Image src={locationImg} alt="location img" />
+                        </div>
+                    </Link>
+
+
+                    <Link href="/profile-screen">
+                        <div className={pathname === "/profile-screen" ? styles.active_bg : ""}>
+                            <Image src={person1} />
+                        </div>
+                    </Link>
+                    <Link href="/notifications">
+                        <div className={pathname === "/notifications" ? styles.active_bg : ""}>
+                            <Image src={notification} />
+                        </div>
+                    </Link>
 
                 </div>
                 <div className={styles.row}>
-                    <div className={styles.setting}>
-                        <Image src={setting} />
-                    </div>
-                    <div className={styles.move}>
+                    <Link href="/setting">
+                        <div className={pathname === "/setting" ? styles.active_bg : ""}>
+                            <Image src={setting} />
+                        </div>
+                    </Link>
+                    <div className={styles.move} onClick={() => signOut({ callbackUrl: "/onboarding" })}>
                         <Image src={move} />
                     </div>
 
@@ -53,20 +68,26 @@ const Sidebar = () => {
                             <Image src={locationImg} alt="location img" />
                             <p className={styles.explore}>Explore</p>
                         </div>
-                        <div className={styles.subRow}>
-                            <Image src={person1} />
-                            <p>Profile</p>
-                        </div>
-                        <div className={styles.subRow}>
-                            <Image src={notification} />
-                            <p>Notification</p>
-                        </div>
+                        <Link href="/profile-screen">
+                            <div className={styles.subRow}>
+                                <Image src={person1} />
+                                <p>Profile</p>
+                            </div>
+                        </Link>
+                        <Link href="/notifications">
+                            <div className={styles.subRow}>
+                                <Image src={notification} />
+                                <p>Notification</p>
+                            </div>
+                        </Link>
                     </div>
                     <div className={styles.row}>
-                        <div className={styles.subRow}>
-                            <Image src={setting} />
-                            <p>Setting</p>
-                        </div>
+                        <Link href="/setting">
+                            <div className={styles.subRow}>
+                                <Image src={setting} />
+                                <p>Setting</p>
+                            </div>
+                        </Link>
                         <div className={styles.subRow} onClick={() => signOut({ callbackUrl: "/onboarding" })}>
                             <Image src={move} />
                             <p>Log out</p>
@@ -79,10 +100,10 @@ const Sidebar = () => {
                     </div>
                 </div>
 
-            </main>
+            </main >
 
 
-        </div>
+        </div >
     )
 }
 
