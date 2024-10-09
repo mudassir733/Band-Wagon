@@ -30,15 +30,7 @@
     gap: 34px;
 }
 
-.container .sidebar .flex .location {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #1ED76026;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-}
+
 
 .container .sidebar .row {
     display: flex;
@@ -70,6 +62,7 @@
     gap: 16px;
     font-family: var(--lato-regular);
     color: var(--white-color);
+    cursor: pointer;
 }
 
 .container .sidebar .subSidebar .flex .subRow .explore {
@@ -92,4 +85,22 @@
 /* ---------handleOpen------ */
 .close {
     display: none;
+}
+
+.move {
+    cursor: pointer;
+}
+
+.active_bg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1ED76026;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.active_img {
+    color: var(--primary-color);
 }

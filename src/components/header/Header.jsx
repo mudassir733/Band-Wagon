@@ -5,11 +5,17 @@ import ellipse from '../../../public/images/Ellipse 190.svg'
 import bandwogan from '../../../public/images/BandWagon.svg'
 import search from "../../../public/images/search.svg"
 import backArro from "../../../public/arrow_back.svg"
-import profile from "../../../public/images/Profile.svg"
+import ProfileImage from "../../../public/images/Profile.svg"
 import Link from "next/link"
+import { useSession } from 'next-auth/react'
 
 
 const Header = () => {
+    const { data: session } = useSession()
+
+
+    console.log(session?.user)
+
 
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -97,8 +103,20 @@ const Header = () => {
                     )}
                 </div>
             </nav>
-            <div className={styles.profile}>
-                <Image src={profile} alt='User Profile' />
+            <div>
+                {session?.user ? (
+                    <div>
+                        <Image
+                            src={session?.user?.image ? session.user.image : ProfileImage}
+                            alt={`${session.user.name}'s profile picture`}
+                            width={40}
+                            height={40}
+                            className={styles.profile}
+                        />
+                    </div>
+                ) : (
+                    <p>Please log in</p>
+                )}
             </div>
         </header>
     )

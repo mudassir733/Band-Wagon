@@ -1,0 +1,36 @@
+/* ======media query for small devices===== */
+
+
+@media screen and (max-width: 769px) {
+    .container {
+        width: 100%;
+        height: fit-content;
+    }
+
+    .row {
+        flex-wrap: wrap;
+    }
+
+    .right_col {
+        text-align: center;
+    }
+
+    .button_box {
+        flex-direction: column-reverse;
+        gap: 20px;
+
+    }
+}
+
+
+@media screen and (max-width: 480px) {
+    .heading {
+        font-size: 25px;
+        line-height: 35px;
+    }
+
+    .text {
+        font-size: 18px;
+        line-height: 28px;
+    }
+}

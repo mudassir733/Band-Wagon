@@ -4,9 +4,13 @@ import Image from 'next/image';
 import styles from './editProdile.module.css';
 import profile from "../../../public/profile-screen.svg"
 import edit from "../../../public/edit-pen.png"
+import { useSession } from 'next-auth/react';
 
 
 const EditProfile = () => {
+    const { data: session } = useSession()
+
+    console.log(session?.user);
 
 
     return (
