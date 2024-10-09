@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: true,
+    },
+    name: {
+        type: String,
+        required: true,
     },
     email: {
         type: String,
@@ -13,12 +18,18 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: function () {
-            // Password is required only if Google ID is not present
             return !this.googleId;
         },
     },
     googleId: {
-        type: String,  // Google OAuth users will have this field
+        type: String,
+        required: false,
+    },
+    profileImage: {
+        type: String,
+    },
+    location: {
+        type: String,
         required: false,
     },
 }, { timestamps: true });
