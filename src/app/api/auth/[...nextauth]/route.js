@@ -51,17 +51,25 @@ const handler = NextAuth({
         signIn: '/auth/login',
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, account, profile }) {
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
-                token.profileImage = user.image || null;
+                token.name = user.name || user.username;
+
+
+                if (account?.provider === 'google') {
+                    token.profileImage = profile.picture;
+                } else {
+                    token.profileImage = user.profileImage;
+                }
             }
             return token;
         },
         async session({ session, token }) {
             session.user.id = token.id;
             session.user.email = token.email;
+            session.user.name = token.name;
             session.user.profileImage = token.profileImage;
             return session;
         },
@@ -71,22 +79,21 @@ const handler = NextAuth({
 
                 const existingUser = await User.findOne({ email: user.email });
 
-
-                const profileImage = account.provider === 'google' ? user.image : null;
+                // If signing in with Google, store Google profile picture
+                const profileImage = account.provider === 'google' ? profile.picture : "";
 
                 if (!existingUser) {
                     const newUser = new User({
                         username: user.name || `user_${account.providerAccountId}`,
-                        name: profile.name,
+                        name: profile?.name || null,
                         email: user.email,
-                        googleId: account.providerAccountId,
-                        profileImage,
-                        location: profile.location || "",
+                        googleId: account.provider === 'google' ? account.providerAccountId : "",
+                        profileImage: profileImage || undefined,
                     });
 
                     await newUser.save();
                 } else if (account.provider === 'google' && !existingUser.profileImage) {
-                    existingUser.profileImage = user.image;
+                    existingUser.profileImage = profile.picture;
                     await existingUser.save();
                 }
 

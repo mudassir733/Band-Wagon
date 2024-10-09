@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true,
+        required: false,
     },
     email: {
         type: String,
@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String,
+        default: "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png",
     },
     location: {
         type: String,

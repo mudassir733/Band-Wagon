@@ -5,13 +5,16 @@ import ellipse from '../../../public/images/Ellipse 190.svg'
 import bandwogan from '../../../public/images/BandWagon.svg'
 import search from "../../../public/images/search.svg"
 import backArro from "../../../public/arrow_back.svg"
-import profile from "../../../public/images/Profile.svg"
+import ProfileImage from "../../../public/images/Profile.svg"
 import Link from "next/link"
 import { useSession } from 'next-auth/react'
 
 
 const Header = () => {
     const { data: session } = useSession()
+
+
+    console.log(session?.user)
 
 
 
@@ -103,18 +106,16 @@ const Header = () => {
             <div>
                 {session?.user ? (
                     <div>
-                        {session?.user?.image && (
-                            <Image
-                                src={session.user.image}
-                                alt={`${session?.user?.name}'s profile picture`}
-                                width={40}
-                                height={40}
-                                className={styles.profile}
-                            />
-                        )}
+                        <Image
+                            src={session?.user?.image ? session.user.image : ProfileImage}
+                            alt={`${session.user.name}'s profile picture`}
+                            width={40}
+                            height={40}
+                            className={styles.profile}
+                        />
                     </div>
                 ) : (
-                    <p>Loading...</p>
+                    <p>Please log in</p>
                 )}
             </div>
         </header>
