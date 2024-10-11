@@ -1,16 +1,18 @@
-import User from "../../../models/user.model";
+import User from "../../../models/user.model.js";
 import connect from "../../../utils/db/connect.js";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
+
 export const POST = async (req) => {
     try {
-        const { username, email, password } = await req.json();
+        const { username, email, password, name, location } = await req.json();
+
 
         if (!username || !email || !password) {
             return new NextResponse("Missing fields", { status: 400 });
         }
-        console.log(username, email, password);
+
 
         await connect();
 
@@ -26,13 +28,22 @@ export const POST = async (req) => {
             username,
             email,
             password: hashedPassword,
+            name,
+            location,
         });
 
         await newUser.save();
-        return new NextResponse("User created successfully", { status: 201 });
+        return NextResponse.json({ message: "User created successfully", user: newUser }, { status: 201 });
 
     } catch (error) {
         console.error("Error in user creation:", error.message);
         return new NextResponse(error.message || "Internal Server Error", { status: 500 });
     }
 };
+
+
+
+
+
+
+
