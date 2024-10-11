@@ -5,6 +5,7 @@ import connect from '../../../../utils/db/connect.js';
 import User from '../../../../models/user.model';
 import bcrypt from 'bcrypt';
 
+
 const handler = NextAuth({
     providers: [
         GoogleProvider({
@@ -53,10 +54,23 @@ const handler = NextAuth({
     callbacks: {
         async jwt({ token, user, account, profile }) {
             if (user) {
-                token.id = user.id;
+                const dbUser = await User.findOne({ email: user.email });
+
+                if (dbUser) {
+                    token.id = dbUser._id;
+                } else {
+                    const newUser = await User.create({
+                        email: user.email,
+                        name: user.name || user.username,
+                        profileImage: account.provider === 'google' ? profile.picture : user.profileImage,
+                        location: user.location || "Unknown",
+                    });
+                    token.id = newUser._id;
+                }
+
                 token.email = user.email;
                 token.name = user.name || user.username;
-
+                token.location = user.location || "Unknown";
 
                 if (account?.provider === 'google') {
                     token.profileImage = profile.picture;
@@ -64,6 +78,7 @@ const handler = NextAuth({
                     token.profileImage = user.profileImage;
                 }
             }
+
             return token;
         },
         async session({ session, token }) {
@@ -71,6 +86,8 @@ const handler = NextAuth({
             session.user.email = token.email;
             session.user.name = token.name;
             session.user.profileImage = token.profileImage;
+            session.user.location = token.location;
+
             return session;
         },
         async signIn({ user, account, profile }) {
@@ -78,20 +95,23 @@ const handler = NextAuth({
                 await connect();
 
                 const existingUser = await User.findOne({ email: user.email });
-
-                // If signing in with Google, store Google profile picture
                 const profileImage = account.provider === 'google' ? profile.picture : "";
 
                 if (!existingUser) {
+                    const location = profile?.locale ? profile.locale : "Unknown";
+                    const name = profile?.name || "Default Name";
+
                     const newUser = new User({
                         username: user.name || `user_${account.providerAccountId}`,
-                        name: profile?.name || null,
+                        name,
+                        location,
                         email: user.email,
                         googleId: account.provider === 'google' ? account.providerAccountId : "",
                         profileImage: profileImage || undefined,
                     });
 
                     await newUser.save();
+
                 } else if (account.provider === 'google' && !existingUser.profileImage) {
                     existingUser.profileImage = profile.picture;
                     await existingUser.save();
@@ -102,7 +122,7 @@ const handler = NextAuth({
                 console.error('Error saving user:', error);
                 return false;
             }
-        },
+        }
     },
 });
 

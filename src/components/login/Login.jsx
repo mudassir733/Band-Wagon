@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 
+
 const validationSchema = Yup.object({
     email: Yup.string()
         .email('Invalid email address')
@@ -26,7 +27,7 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
-    const { data: session, status } = useSession();
+    const { data: session, status } = useSession()
     const router = useRouter();
 
     const formik = useFormik({
@@ -40,17 +41,22 @@ const Login = () => {
             const { email, password } = values;
 
             try {
-                const result = await signIn('credentials', {
-                    redirect: false,
-                    email,
-                    password,
+                // Call the custom login API
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
                 });
 
-                if (result.error) {
-                    toast.error(result.error || 'Login failed. Please try again.');
+                const result = await response.json();
+
+                if (!response.ok) {
+                    toast.error(result.message || 'Login failed. Please try again.');
                 } else {
                     toast.success("Logged in successfully!");
-                    router.push('/'); // Redirect to home page on successful login
+                    router.push('/');
                 }
             } catch (error) {
                 console.error("Error during login:", error.message);

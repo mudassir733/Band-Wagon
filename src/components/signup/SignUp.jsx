@@ -20,6 +20,8 @@ import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const { data: session, status } = useSession();
+  console.log(session?.user);
+
   const router = useRouter();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -30,7 +32,7 @@ const SignUp = () => {
   };
 
   const formik = useFormik({
-    initialValues: { username: '', email: '', password: '' },
+    initialValues: { username: '', email: '', password: '', name: "Andy warhool", location: "" },
     validationSchema: schema,
     validateOnChange: false,
     validateOnBlur: false,
@@ -81,6 +83,8 @@ const SignUp = () => {
         username: true,
         email: true,
         password: true,
+        location: true,
+        name: true,
       });
     }
   };
