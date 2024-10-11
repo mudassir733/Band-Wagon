@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { type } from "os";
+
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: false,
+        default: "Andy user"
     },
     email: {
         type: String,
@@ -32,6 +33,7 @@ const userSchema = new mongoose.Schema({
     location: {
         type: String,
         required: false,
+        default: null,
     },
 }, { timestamps: true });
 
