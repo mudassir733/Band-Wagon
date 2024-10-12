@@ -14,10 +14,6 @@ const Header = () => {
     const { data: session } = useSession()
 
 
-    console.log(session?.user)
-
-
-
     const [isExpanded, setIsExpanded] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [recentSearches, setRecentSearches] = useState([

@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
 
 const EditProfile = () => {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const [profile, setProfile] = useState({
         name: '',
         username: '',
@@ -19,6 +19,7 @@ const EditProfile = () => {
         username: '',
         location: ''
     });
+    const [selectedImage, setSelectedImage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,7 +37,7 @@ const EditProfile = () => {
                         location: data.location || '',
                         profileImage: data.profileImage || ''
                     });
-                    // Initialize inputValues with current profile data
+
                     setInputValues({
                         name: '',
                         username: '',
@@ -64,6 +65,39 @@ const EditProfile = () => {
         }));
     };
 
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(URL.createObjectURL(file));
+            uploadImageToCloudinary(file);
+        }
+    };
+
+
+    const uploadImageToCloudinary = async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "band_wagon");
+
+        try {
+            const response = await fetch("https://api.cloudinary.com/v1_1/dx0rctl2g/image/upload", {
+                method: "POST",
+                body: formData
+            });
+            const data = await response.json();
+            if (data.secure_url) {
+                setProfile((prev) => ({
+                    ...prev,
+                    profileImage: data.secure_url
+                }));
+            }
+        } catch (error) {
+            console.error("Error uploading image to Cloudinary:", error);
+            toast.error("Failed to upload image");
+        }
+    };
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
@@ -81,9 +115,10 @@ const EditProfile = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: inputValues.name,
-                    username: inputValues.username,
-                    location: inputValues.location,
+                    name: inputValues.name || profile.name,
+                    username: inputValues.username || profile.username,
+                    location: inputValues.location || profile.location,
+                    profileImage: profile.profileImage
                 }),
             });
 
@@ -92,6 +127,7 @@ const EditProfile = () => {
                 console.log("Updated profile", updatedProfile);
 
                 toast.success("Profile updated successfully!");
+
 
                 setProfile({
                     name: updatedProfile.name,
@@ -133,14 +169,29 @@ const EditProfile = () => {
                 </div>
                 <div className={styles.profileCard}>
                     <div className={styles.person}>
-                        <Image src={profile.profileImage || profileImg} alt="Profile Picture" width={120} height={120} className={styles.prodilePicture} />
+                        <Image
+                            src={selectedImage || profile.profileImage || profileImg}
+                            alt="Profile Picture"
+                            width={120}
+                            height={120}
+                            className={styles.prodilePicture}
+                        />
                         <div className={styles.edit}>
-                            <Image src={edit} alt="Edit Icon" />
+                            <label htmlFor="profileImage">
+                                <Image src={edit} alt="Edit Icon" />
+                            </label>
+                            <input
+                                type="file"
+                                id="profileImage"
+                                style={{ display: 'none' }}
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
                         </div>
                     </div>
                     <div className={styles.personInfo}>
-                        <h3>{profile.name || 'Name not set'}</h3>
-                        <p>{profile.username || 'Username not set'}</p>
+                        <h3>{profile.name || session?.user?.name}</h3>
+                        <p>{profile.username || session?.user?.username}</p>
                     </div>
                 </div>
                 <div className={styles.cardShow_container}>
@@ -154,6 +205,7 @@ const EditProfile = () => {
                                     id="name"
                                     value={inputValues.name}
                                     onChange={handleInputChange}
+                                    autoComplete='off'
                                 />
                             </div>
                         </div>
@@ -166,6 +218,7 @@ const EditProfile = () => {
                                     id="username"
                                     value={inputValues.username}
                                     onChange={handleInputChange}
+                                    autoComplete='off'
                                 />
                             </div>
                         </div>
@@ -178,6 +231,7 @@ const EditProfile = () => {
                                     id="location"
                                     value={inputValues.location}
                                     onChange={handleInputChange}
+                                    autoComplete='off'
                                 />
                             </div>
 

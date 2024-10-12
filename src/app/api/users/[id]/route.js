@@ -48,7 +48,7 @@ export async function PUT(req, { params }) {
     const { id } = params;
 
     try {
-        const { name, username, location } = await req.json();
+        const { name, username, location, profileImage } = await req.json();
 
         await connect();
 
@@ -66,6 +66,7 @@ export async function PUT(req, { params }) {
         user.name = name || user.name;
         user.username = username || user.username;
         user.location = location || user.location;
+        user.profileImage = profileImage || user.profileImage;
 
         await user.save();
 
