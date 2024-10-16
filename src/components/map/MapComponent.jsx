@@ -1,163 +1,223 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
+'use client';
+import React, { useState, useCallback, useEffect } from 'react';
+import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import styles from "./map.module.css";
+import person from "../../../public/Profile.svg";
+import Image from 'next/image';
+import verified from "../../../public/new_releases.svg";
+import location from "../../../public/location_on.svg";
 
-const MapComponent = () => {
-    const mapRef = useRef();
-    const [selectedMarker, setSelectedMarker] = useState(null);
-    const [placeDetails, setPlaceDetails] = useState(null);
+const containerStyle = {
+    width: '100%',
+    height: '100vh',
+};
 
-    const markers = [
-        {
-            position: { lat: 48.7774, lng: 19.2451 },
-            label: { text: 'Banská Bystrica', color: 'white' },
-            iconType: 'location',
-        },
-        {
-            position: { lat: 48.8567844, lng: 20.213108 },
-            label: { text: 'Opera House', color: 'white' },
-            iconType: 'location',
-        },
-        {
-            position: { lat: 43.2651, lng: 19.2451 },
-            label: { text: 'Taronga Zoo', color: 'white' },
-            iconType: 'location',
-        },
-        {
-            position: { lat: 42.8209738, lng: 19.2563253 },
-            label: { text: 'Manly Beach', color: 'white' },
-            iconType: 'location',
-        },
-        {
-            position: { lat: 48.7123, lng: 19.1467 },
-            label: { text: 'Person Marker', color: 'white' },
-            iconType: 'person',
-        },
-    ];
+const defaultCenter = {
+    lat: 37.437041393899676,
+    lng: -4.191635586788259,
+};
+
+const markers = [
+    { lat: 37.4382777417916, lng: -4.198114354045142, info: 'Location: Zargilla Baja' },
+    { lat: 37.479604848045184, lng: -4.233996265465776, info: 'Location: Another Place' },
+    { lat: 37.48042354247826, lng: -4.183197912495632, info: 'Location: Las Angosturas' },
+    { lat: 37.46726658097601, lng: -4.181451226535549, info: 'Location: Azores' },
+    { lat: 37.50133596699067, lng: -4.21476371707949, info: 'Location: El Esparragal' }
+];
 
 
-    const { isLoaded, loadError } = useJsApiLoader({
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    });
+const darkThemeStyles = [
+    { "elementType": "geometry", "stylers": [{ "color": "#212121" }] },
+    { "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
+    { "elementType": "labels.text.fill", "stylers": [{ "color": "#757575" }] },
+    { "elementType": "labels.text.stroke", "stylers": [{ "color": "#212121" }] },
+    { "featureType": "administrative", "elementType": "geometry", "stylers": [{ "color": "#757575" }] },
+    { "featureType": "administrative.country", "elementType": "labels.text.fill", "stylers": [{ "color": "#9e9e9e" }] },
+    { "featureType": "administrative.land_parcel", "stylers": [{ "visibility": "off" }] },
+    { "featureType": "administrative.locality", "elementType": "labels.text.fill", "stylers": [{ "color": "#bdbdbd" }] },
+    { "featureType": "poi", "elementType": "labels.text.fill", "stylers": [{ "color": "#757575" }] },
+    { "featureType": "poi.park", "elementType": "geometry", "stylers": [{ "color": "#181818" }] },
+    { "featureType": "poi.park", "elementType": "labels.text.fill", "stylers": [{ "color": "#616161" }] },
+    { "featureType": "poi.park", "elementType": "labels.text.stroke", "stylers": [{ "color": "#1b1b1b" }] },
+    { "featureType": "road", "elementType": "geometry.fill", "stylers": [{ "color": "#2c2c2c" }] },
+    { "featureType": "road", "elementType": "labels.text.fill", "stylers": [{ "color": "#8a8a8a" }] },
+    { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#373737" }] },
+    { "featureType": "road.highway", "elementType": "geometry", "stylers": [{ "color": "#3c3c3c" }] },
+    { "featureType": "road.highway.controlled_access", "elementType": "geometry", "stylers": [{ "color": "#4e4e4e" }] },
+    { "featureType": "road.local", "elementType": "labels.text.fill", "stylers": [{ "color": "#616161" }] },
+    { "featureType": "transit", "elementType": "labels.text.fill", "stylers": [{ "color": "#757575" }] },
+    { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }] },
+    { "featureType": "water", "elementType": "labels.text.fill", "stylers": [{ "color": "#3d3d3d" }] }
+];
+
+const lightThemeStyles = [
+    { "featureType": "administrative.land_parcel", "stylers": [{ "visibility": "off" }] },
+    { "featureType": "administrative.neighborhood", "stylers": [{ "visibility": "off" }] },
+    { "featureType": "poi", "elementType": "labels.text", "stylers": [{ "visibility": "off" }] },
+    { "featureType": "road", "elementType": "labels", "stylers": [{ "visibility": "off" }] },
+    { "featureType": "water", "elementType": "labels.text", "stylers": [{ "visibility": "off" }] },
+    { "featureType": "poi", "elementType": "labels", "stylers": [{ "visibility": "off" }] }
+];
 
 
-    const getPlaceDetails = async () => {
-        const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
-        const { Place } = await google.maps.importLibrary('places');
+const imagePath = '/marker.png';
 
-        const place = new Place({
-            id: 'ChIJN5Nz71W3j4ARhx5bwpTQEGg',
-            requestedLanguage: 'en',
-        });
+const GoogleMaps = () => {
+    const [map, setMap] = useState(null);
+    const [isDarkTheme, setIsDarkTheme] = useState(false);
+    const [activeMarker, setActiveMarker] = useState(null);
+    const [markerIcons, setMarkerIcons] = useState({}); // State for marker icons
 
-        await place.fetchFields({
-            fields: ['displayName', 'formattedAddress', 'location'],
-        });
+    const onLoad = useCallback((mapInstance) => {
+        setMap(mapInstance);
+    }, []);
 
-        console.log('Place Name:', place.displayName);
-        console.log('Address:', place.formattedAddress);
+    const onUnmount = useCallback((mapInstance) => {
+        setMap(null);
+    }, []);
 
+    const createCustomMarkerBitmap = async ({
+        imagePath,
+        stemLength = 20,
+        stemWidth = 28,
+        stemOffset = 10,
+        glowSize = 3,
+        glowSpread = 3,
+        imageScale = 40,
+        pinRoundness = 10,
+        glowColor = '#D76020', // Example glow color
+        stemColor = '#D76020', // Example stem color
+    }) => {
+        const image = await loadImage(imagePath);
 
-        setPlaceDetails({
-            displayName: place.displayName,
-            formattedAddress: place.formattedAddress,
-            location: place.location,
-        });
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
 
+        const padding = glowSize;
+        const markerSize = { width: 120, height: 150 + stemLength + padding };
 
-        new AdvancedMarkerElement({
-            map: mapRef.current,
-            position: place.location,
-            title: place.displayName,
-        });
+        canvas.width = markerSize.width;
+        canvas.height = markerSize.height;
+
+        // Draw the glow effect
+        context.fillStyle = glowColor;
+        context.globalAlpha = 0.5; // Adjust for transparency
+        context.beginPath();
+        const glowRadius = imageScale / 2 + glowSize;
+        context.arc(markerSize.width / 2, markerSize.height / 2 + padding, glowRadius, 0, 2 * Math.PI);
+        context.fill();
+        context.globalAlpha = 1; // Reset transparency
+
+        // Draw the image
+        context.save();
+        const imageX = (markerSize.width - imageScale) / 2;
+        const imageY = (markerSize.height - imageScale) / 2;
+        context.beginPath();
+        context.arc(markerSize.width / 2, markerSize.height / 2 + padding, imageScale / 2, 0, 2 * Math.PI);
+        context.clip();
+        context.drawImage(image, imageX, imageY, imageScale, imageScale);
+        context.restore();
+
+        // Draw the stem
+        const baseY = glowRadius + padding - stemOffset;
+        const tipY = baseY + stemLength;
+        const halfWidth = stemWidth / 2;
+
+        context.fillStyle = stemColor;
+        context.beginPath();
+        context.moveTo(markerSize.width / 2 - halfWidth, baseY);
+        context.quadraticCurveTo(markerSize.width / 2, baseY - 12, markerSize.width / 2 + halfWidth, baseY);
+        context.lineTo(markerSize.width / 2, tipY);
+        context.closePath();
+        context.fill();
+
+        return canvas.toDataURL('/marker.png');
     };
 
+    const loadImage = (src) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = src;
+        });
+    };
 
     useEffect(() => {
-
-        if (isLoaded && google && google.maps && mapRef.current) {
-            getPlaceDetails();
-        }
-    }, [isLoaded]);
-
-
-    const getIcon = (iconType) => {
-        if (iconType === 'person') {
-            return {
-                url: '/Man.png',
-                scaledSize: { width: 60, height: 60 },
-                labelOrigin: new window.google.maps.Point(20, 60),
-            };
-        }
-        return {
-            url: '/Artist.svg',
-            scaledSize: { width: 40, height: 40 },
-            labelOrigin: new window.google.maps.Point(20, 50),
+        const loadMarkers = async () => {
+            const icons = {};
+            for (const marker of markers) {
+                icons[`${marker.lat},${marker.lng}`] = await createCustomMarkerBitmap({
+                    imagePath: '/marker.png', // Path to your marker image
+                });
+            }
+            setMarkerIcons(icons);
         };
+
+        loadMarkers();
+    }, []); // Load markers on mount
+
+    const toggleTheme = () => {
+        setIsDarkTheme((prev) => !prev);
     };
 
-    if (loadError) {
-        return <div>Error loading Google Maps</div>;
-    }
-
-    if (!isLoaded) {
-        return <div>Loading Google Maps...</div>;
-    }
-
     return (
-        <GoogleMap
-            mapContainerClassName={styles.map_container}
-            center={{ lat: 48.7774, lng: 19.2451 }}
-            zoom={8}
-            mapTypeId='roadmap'
-            onLoad={(map) => (mapRef.current = map)}  // Store map reference
-        >
-
-            {markers.map((marker, index) => (
-                <Marker
-                    key={index}
-                    position={marker.position}
-                    label={{
-                        text: marker.label.text,
-                        color: marker.label.color,
-                        fontSize: "16px",
+        <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+            <div className={styles.mapContainer}>
+                <button onClick={toggleTheme} className={styles.btn}>
+                    {isDarkTheme ? 'Light' : 'Dark'}
+                </button>
+                <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={defaultCenter}
+                    zoom={12}
+                    options={{
+                        styles: isDarkTheme ? darkThemeStyles : lightThemeStyles,
                     }}
-                    icon={getIcon(marker.iconType)}
-                    onClick={() => setSelectedMarker(marker.position)}
-                />
-            ))}
-
-
-            {selectedMarker && (
-                <InfoWindow
-                    position={selectedMarker}
-                    onCloseClick={() => setSelectedMarker(null)}
+                    onLoad={onLoad}
+                    onUnmount={onUnmount}
                 >
-                    <div>Custom Info Window</div>
-                </InfoWindow>
-            )}
+                    {markers.map((marker, index) => (
+                        <Marker
+                            key={index}
+                            position={{ lat: marker.lat, lng: marker.lng }}
+                            icon={markerIcons[`${marker.lat},${marker.lng}`]} // Use the loaded custom icon
+                            onClick={() => setActiveMarker(marker)}
+                        />
+                    ))}
 
-
-            {placeDetails && (
-                <>
-                    <Marker
-                        position={placeDetails.location}
-                        title={placeDetails.displayName}
-                    />
-                    <InfoWindow
-                        position={placeDetails.location}
-                        onCloseClick={() => setPlaceDetails(null)}
-                    >
-                        <div>
-                            <h3>{placeDetails.displayName}</h3>
-                            <p>{placeDetails.formattedAddress}</p>
-                        </div>
-                    </InfoWindow>
-                </>
-            )}
-
-        </GoogleMap>
+                    {activeMarker && (
+                        <InfoWindow
+                            position={{ lat: activeMarker.lat, lng: activeMarker.lng }}
+                            onCloseClick={() => setActiveMarker(null)}
+                        >
+                            <div className={styles.model}>
+                                <div className={styles.model_flex}>
+                                    <div className={styles.left_col}>
+                                        <Image src={person} className={styles.img} />
+                                    </div>
+                                    <div className={styles.righ_col}>
+                                        <div className={styles.title}>
+                                            <h1>Allen Ruppersberg</h1>
+                                            <Image src={verified} />
+                                        </div>
+                                        <div className={styles.info_artist}>
+                                            <div className={styles.flex_box}>
+                                                <div>
+                                                    <Image src={location} />
+                                                </div>
+                                                <p>New York City</p>
+                                            </div>
+                                            {/* Additional info sections */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </InfoWindow>
+                    )}
+                </GoogleMap>
+            </div>
+        </LoadScript>
     );
 };
 
-export default MapComponent;
+export default GoogleMaps;
