@@ -2,6 +2,7 @@ import User from "../../../models/user.model.js";
 import connect from "../../../utils/db/connect.js";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
+import { signIn } from "next-auth/react"
 
 
 export const POST = async (req) => {
@@ -33,6 +34,20 @@ export const POST = async (req) => {
         });
 
         await newUser.save();
+
+
+
+        // Automatically sign in the user after successful sign up
+        const signInResponse = await signIn("credentials", {
+            redirect: false,  // prevent redirect
+            email,
+            password,
+        });
+
+        if (signInResponse.error) {
+            console.error("Sign-in error:", signInResponse.error);
+            return NextResponse.json({ message: "User created, but failed to log in" }, { status: 201 });
+        }
         return NextResponse.json({ message: "User created successfully", user: newUser }, { status: 201 });
 
     } catch (error) {

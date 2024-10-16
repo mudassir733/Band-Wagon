@@ -27,6 +27,7 @@ export async function GET(req, { params }) {
                 username: user.username,
                 email: user.email,
                 location: user.location,
+                role: user.role,
                 profileImage: user.profileImage,
             }),
             { status: 200 }
@@ -48,7 +49,8 @@ export async function PUT(req, { params }) {
     const { id } = params;
 
     try {
-        const { name, username, location, profileImage } = await req.json();
+        const { name, username, location, profileImage, role } = await req.json();
+        console.log(name, username, location, profileImage, role)
 
         await connect();
 
@@ -67,6 +69,7 @@ export async function PUT(req, { params }) {
         user.username = username || user.username;
         user.location = location || user.location;
         user.profileImage = profileImage || user.profileImage;
+        user.role = role || user.role;
 
         await user.save();
 
@@ -79,6 +82,7 @@ export async function PUT(req, { params }) {
                 username: user.username,
                 email: user.email,
                 location: user.location,
+                role: user.role,
                 profileImage: user.profileImage,
             }),
             { status: 200 }

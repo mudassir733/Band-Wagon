@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import connect from '../../../../utils/db/connect.js';
 import User from '../../../../models/user.model.js';
+import { signIn } from 'next-auth/react';
 
 export async function POST(req) {
     try {
@@ -24,6 +25,17 @@ export async function POST(req) {
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
             return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+        }
+
+        // Automatically sign in the user after successful login
+        const signInResponse = await signIn("credentials", {
+            redirect: false,
+            email,
+            password,
+        });
+
+        if (signInResponse.error) {
+            return NextResponse.json({ message: 'Login failed', error: signInResponse.error }, { status: 401 });
         }
 
 

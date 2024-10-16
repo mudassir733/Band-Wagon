@@ -62,6 +62,7 @@ const handler = NextAuth({
                     const newUser = await User.create({
                         email: user.email,
                         name: user.name || user.username,
+                        role: user.role,
                         profileImage: account.provider === 'google' ? profile.picture : user.profileImage,
                         location: user.location || "Unknown",
                     });
@@ -70,6 +71,7 @@ const handler = NextAuth({
 
                 token.email = user.email;
                 token.name = user.name || user.username;
+                token.role = user.role;
                 token.location = user.location || "Unknown";
 
                 if (account?.provider === 'google') {
@@ -84,6 +86,7 @@ const handler = NextAuth({
         async session({ session, token }) {
             session.user.id = token.id;
             session.user.email = token.email;
+            session.user.role = token.role;
             session.user.name = token.name;
             session.user.profileImage = token.profileImage;
             session.user.location = token.location;

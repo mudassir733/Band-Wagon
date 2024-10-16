@@ -4,8 +4,8 @@ import { ObjectId } from 'mongodb';
 
 export async function PUT(req) {
     try {
-        const { id, name, username, location } = await req.json();
-        console.log("Received data:", { id, name, username, location });
+        const { id, name, username, location, role } = await req.json();
+        console.log("Received data:", { id, name, username, location, role });
 
         await connect();
 
@@ -37,6 +37,7 @@ export async function PUT(req) {
             user.name = name;
             user.username = username;
             user.location = location;
+            user.role = role;
             await user.save();
 
             return new Response(JSON.stringify({ message: 'Profile updated successfully' }), {

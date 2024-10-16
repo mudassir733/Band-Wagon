@@ -27,7 +27,7 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
-    const { data: session, status } = useSession()
+    const { data: session, status } = useSession();
     const router = useRouter();
 
     const formik = useFormik({
@@ -41,19 +41,14 @@ const Login = () => {
             const { email, password } = values;
 
             try {
-                // Call the custom login API
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
+                const result = await signIn('credentials', {
+                    redirect: false, // Do not redirect automatically, handle manually
+                    email,
+                    password,
                 });
 
-                const result = await response.json();
-
-                if (!response.ok) {
-                    toast.error(result.message || 'Login failed. Please try again.');
+                if (result?.error) {
+                    toast.error(result.error || 'Login failed. Please try again.');
                 } else {
                     toast.success("Logged in successfully!");
                     router.push('/');
