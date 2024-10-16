@@ -143,7 +143,6 @@ const EditProfile = () => {
                 });
 
                 await fetch('/api/auth/session?update');
-
             } else {
                 const errorData = await response.json();
                 toast.error(errorData.message || 'Error updating profile');

@@ -9,7 +9,7 @@ import backArro from "../../../public/arrow_back.svg"
 import ProfileImg from "../../../public/images/Profile.svg"
 import Link from "next/link"
 import { useSession } from 'next-auth/react'
-
+import { toast } from 'react-toastify'
 
 const Header = () => {
     const { data: session, status } = useSession();
@@ -17,16 +17,20 @@ const Header = () => {
         profileImage: '',
         profile: ProfileImg
     });
+    const [role, setRole] = useState(session?.user?.role || "user");
+    const [isRoleUpdating, setIsRoleUpdating] = useState(false);
 
     const fetchProfile = async () => {
         if (!session?.user?.id) return;
         try {
             const res = await fetch(`/api/users/${session.user.id}`);
+
             if (res.ok) {
                 const data = await res.json();
                 setProfile({
                     profileImage: data.profileImage || ''
                 });
+                setRole(data.role || 'user');
             } else {
                 toast.error('Failed to load profile data');
             }
@@ -41,6 +45,40 @@ const Header = () => {
             fetchProfile();
         }
     }, [status, session]);
+
+    // Role switch function
+    const handleRoleSwitch = async () => {
+        if (!session?.user?.id) {
+            toast.error('User session not found. Please log in.');
+            return;
+        }
+
+        const newRole = role === "user" ? "artist" : "user";
+        setIsRoleUpdating(true);
+        console.log(newRole)
+
+        try {
+            const res = await fetch(`/api/users/${session.user.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: newRole })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setRole(data.role);
+                toast.success(`Role updated to ${data.role}`);
+            } else {
+                const errorData = await res.json();
+                toast.error(`Failed to update role: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Error updating role:', error.message);
+            toast.error('An error occurred while updating role');
+        } finally {
+            setIsRoleUpdating(false);
+        }
+    };
 
     const [isExpanded, setIsExpanded] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -92,6 +130,7 @@ const Header = () => {
                             <span className={styles.searchIcon}>
                                 <Image src={search} />
                             </span>
+
                         )}
 
                         <input
@@ -131,13 +170,10 @@ const Header = () => {
                 </div>
             </nav>
             <div>
-                <div>
+                <div className={styles.role_container}>
                     {!profile.profileImage && (
-                        <Image src={profile.profile} width={40}
-                            height={40}
-                            className={styles.profile} />
+                        <Image src={profile.profile} width={40} height={40} className={styles.profile} />
                     )}
-
                     {profile.profileImage && (
                         <Image
                             src={profile.profileImage}
@@ -147,7 +183,19 @@ const Header = () => {
                             className={styles.profile}
                         />
                     )}
+
+                    <div className={styles.roleSwitch}>
+                        <button
+                            onClick={handleRoleSwitch}
+                            disabled={isRoleUpdating} // Disable button when updating
+                            className={styles.switchButton}
+                        >
+                            Switch to {role === "user" ? "artist" : "user"}
+                        </button>
+                    </div>
                 </div>
+
+
             </div>
         </header>
     );
