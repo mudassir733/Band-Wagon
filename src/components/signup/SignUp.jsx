@@ -20,12 +20,15 @@ import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const { data: session, status } = useSession();
-  console.log(session?.user);
-
   const router = useRouter();
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+
+    setIsClient(true);
+  }, []);
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -37,10 +40,6 @@ const SignUp = () => {
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: async (values, { setSubmitting }) => {
-      setError('');
-      setSuccess('');
-      setSubmitting(true);
-
       try {
         const response = await fetch('/api/signup', {
           method: 'POST',
@@ -51,12 +50,23 @@ const SignUp = () => {
         });
 
         if (response.status === 201) {
-          setSuccess("User created successfully!");
           toast.success("User created successfully!");
-          router.push("/login");
+          router.push("/login")
+          // Automatically log in the user
+          const { email, password } = values;
+          const signInResult = await signIn('credentials', {
+            redirect: false,
+            email,
+            password,
+          });
+
+          if (signInResult?.error) {
+            toast.error('Sign in failed after registration. Please login manually.');
+          } else {
+            router.push('/');
+          }
         } else {
           const errorMessage = await response.text();
-
           if (errorMessage.includes("The email already exists")) {
             toast.error("User with this email already exists!");
           } else {
@@ -64,7 +74,6 @@ const SignUp = () => {
           }
         }
       } catch (error) {
-        setError('An unexpected error occurred. Please try again.');
         toast.error('An unexpected error occurred. Please try again.');
       } finally {
         setSubmitting(false);

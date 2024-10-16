@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png",
     },
+    role: {
+        type: String,
+        enum: ["user", "artist"],
+        default: "user",
+    },
     location: {
         type: String,
         required: false,

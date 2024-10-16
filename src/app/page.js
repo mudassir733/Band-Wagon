@@ -13,10 +13,11 @@ import Image from 'next/image'
 import styles from './styles.module.css'
 import Sidebar from "../components/sidebar/Sidebar"
 import MapComponent from "../components/map/MapComponent"
+import { useSession } from "next-auth/react"
 
 const Dropdown = ({ label, options, isOpen, onToggle, selected = [], onSelect }) => {
   const handleSelect = (option, e) => {
-    e.stopPropagation(); // Prevent dropdown from closing on checkbox click
+    e.stopPropagation();
     onSelect(option);
   };
 
@@ -41,8 +42,10 @@ const Dropdown = ({ label, options, isOpen, onToggle, selected = [], onSelect })
 
 // Home component
 export default function Home() {
+  const { data: session } = useSession()
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const role = session?.user?.role || "user";
 
   const handleGenreSelect = (genre) => {
     setSelectedGenres((prevSelectedGenres) =>

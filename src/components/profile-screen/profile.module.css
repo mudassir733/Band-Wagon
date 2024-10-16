@@ -101,3 +101,10 @@
     height: 24px;
     color: var(--white-color);
 }
+
+.profile {
+    border-radius: 50%;
+    object-fit: cover !important;
+    height: 120px !important;
+    width: 120px !important;
+}

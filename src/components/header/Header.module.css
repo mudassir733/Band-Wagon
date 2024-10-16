@@ -124,4 +124,17 @@
 
 .profile {
     border-radius: 50px;
+    object-fit: cover;
+    height: 40px !important;
+}
+
+.role_container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.roleSwitch {
+    display: flex;
+    color: var(--white-color);
 }
