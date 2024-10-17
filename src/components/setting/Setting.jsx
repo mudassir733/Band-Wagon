@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "./setting.module.css"
 import Image from 'next/image';
 import rightChev from "../../../public/chevron_right.svg"
@@ -13,14 +13,115 @@ import { IoIosEye } from "react-icons/io";
 import { LuSunMedium } from "react-icons/lu";
 import { FaMoon } from "react-icons/fa6";
 import Sidebar from '../sidebar/Sidebar';
-
-
-
-
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 
 const Setting = () => {
+    const { data: session } = useSession()
     const [activeSection, setActiveSection] = useState('changeEmail');
+    const [profile, setProfile] = useState({
+        email: '',
+    });
+
+    const [inputValues, setInputValues] = useState({
+        email: '',
+    });
+
+    useEffect(() => {
+        console.log(session?.user);
+
+    })
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (!session?.user?.id) return;
+
+            try {
+                const res = await fetch(`/api/users/${session.user.id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setProfile({
+                        email: data.email || '',
+                    });
+
+                    setInputValues({
+                        email: '',
+
+                    });
+                } else {
+                    toast.error('Failed to load profile data');
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                toast.error('An error occurred while fetching profile data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [session?.user?.id]);
+
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setInputValues((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!session?.user?.id) {
+            toast.error('User ID is missing');
+            return;
+        }
+
+
+        try {
+            const response = await fetch(`/api/users/${session.user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: inputValues.email || profile.email,
+                }),
+            });
+
+            if (response.ok) {
+                const updatedProfile = await response.json();
+                console.log("Updated profile", updatedProfile);
+
+                toast.success("Profile updated successfully!");
+
+
+                setProfile({
+                    email: updatedProfile.email,
+                });
+
+                setInputValues({
+                    email: '',
+                });
+
+                await fetch('/api/auth/session?update');
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.message || 'Error updating profile');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            toast.error('Failed to update profile. Please try again later.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const [switchStates, setSwitchStates] = useState({
         radius: false,
@@ -33,7 +134,7 @@ const Setting = () => {
     const toggleSwitch = (switchKey) => {
         setSwitchStates((prevStates) => ({
             ...prevStates,
-            [switchKey]: !prevStates[switchKey], // Toggle the specific switch
+            [switchKey]: !prevStates[switchKey],
         }));
     };
 
@@ -42,34 +143,17 @@ const Setting = () => {
             case 'changeEmail':
                 return (
                     <div className={styles.content}>
-                        <form className={styles.form}>
+                        <form className={styles.form} onSubmit={handleFormSubmit}>
                             <div className={styles.heading}>
                                 <h3>Change email</h3>
                             </div>
                             <div className={styles.input_box}>
                                 <div>
                                     <MdOutlineMailOutline color='#525252' />
-                                </div>
-                                <input className={styles.input} autoComplete='off' type="email" placeholder="Current email" />
-                            </div>
-
-                            <div className={styles.input_box}>
-                                <div>
-                                    <MdOutlineMailOutline color='#525252' />
 
                                 </div>
-                                <input className={styles.input} type="email" autoComplete='off' placeholder="New email" />
-                            </div>
-                            <div className={styles.input_box}>
-                                <div>
-
-                                    <RiLockPasswordLine color='#525252' />
-                                </div>
-                                <input className={styles.input} type="password" autoComplete='off' placeholder="Password" />
-                                <div>
-                                    <IoIosEye color='#525252' />
-                                </div>
-
+                                <input className={styles.input} name='email' type="email"
+                                    id='email' autoComplete='off' placeholder="New email" value={inputValues.email} onChange={handleInputChange} />
                             </div>
                             <button type="submit" className={styles.btn}>Save changes</button>
                         </form>

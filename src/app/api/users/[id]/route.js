@@ -49,8 +49,8 @@ export async function PUT(req, { params }) {
     const { id } = params;
 
     try {
-        const { name, username, location, profileImage, role } = await req.json();
-        console.log(name, username, location, profileImage, role)
+        const { name, username, location, profileImage, role, confirmPassword, password, email } = await req.json();
+        console.log(name, username, location, profileImage, role, confirmPassword)
 
         await connect();
 
@@ -68,8 +68,24 @@ export async function PUT(req, { params }) {
         user.name = name || user.name;
         user.username = username || user.username;
         user.location = location || user.location;
+        user.email = email || user.email;
         user.profileImage = profileImage || user.profileImage;
         user.role = role || user.role;
+
+        if (email) {
+            user.email = email
+        }
+
+
+        if (password && confirmPassword) {
+            if (password === confirmPassword) {
+                user.password = password
+            } else {
+                return new Response(JSON.stringify({ message: 'Passwords do not match' }), {
+                    status: 400,
+                });
+            }
+        }
 
         await user.save();
 

@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
             return !this.googleId;
         },
     },
+    confirmPassword: {
+        type: String,
+        required: false,
+    },
     googleId: {
         type: String,
         required: false,

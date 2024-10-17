@@ -11,6 +11,10 @@ import chevronLeft from "../../../public/images/chevron_left.svg"
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { CiLocationOn } from "react-icons/ci";
+import { FaRegUser } from "react-icons/fa6";
+import { IoNotificationsOutline } from "react-icons/io5";
+import { IoSettingsSharp } from "react-icons/io5";
 
 
 
@@ -65,27 +69,27 @@ const Sidebar = () => {
                 <div className={`${open ? styles.subSidebar : styles.close}`}>
                     <div className={styles.flex}>
                         <div className={styles.subRow}>
-                            <Image src={locationImg} alt="location img" />
-                            <p className={styles.explore}>Explore</p>
+                            <CiLocationOn size={23} className={pathname === "/" ? styles.active : ""} />
+                            <p className={pathname === "/" ? styles.explore : ""}>Explore</p>
                         </div>
                         <Link href="/profile-screen">
                             <div className={styles.subRow}>
-                                <Image src={person1} />
-                                <p>Profile</p>
+                                <FaRegUser size={18} className={pathname === "/profile-screen" ? styles.active : ""} />
+                                <p className={pathname === "/profile-screen" ? styles.active : ""}>Profile</p>
                             </div>
                         </Link>
                         <Link href="/notifications">
                             <div className={styles.subRow}>
-                                <Image src={notification} />
-                                <p>Notification</p>
+                                <IoNotificationsOutline size={20} className={pathname === "/notifications" ? styles.active : ""} />
+                                <p className={pathname === "/notifications" ? styles.active : ""}>Notification</p>
                             </div>
                         </Link>
                     </div>
                     <div className={styles.row}>
                         <Link href="/setting">
                             <div className={styles.subRow}>
-                                <Image src={setting} />
-                                <p>Setting</p>
+                                <IoSettingsSharp className={pathname === "/setting" ? styles.active : ""} />
+                                <p className={pathname === "/setting" ? styles.active : ""}>Setting</p>
                             </div>
                         </Link>
                         <div className={styles.subRow} onClick={() => signOut({ callbackUrl: "/onboarding" })}>
