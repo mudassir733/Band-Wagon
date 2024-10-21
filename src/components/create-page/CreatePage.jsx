@@ -12,14 +12,27 @@ import monitize from "../../../public/monetization_on.svg"
 import user from "../../../public/Profile.svg"
 import verify from "../../../public/new_releases.svg"
 import { IoMdAdd } from "react-icons/io";
+import axios from 'axios'
+import { toast } from "react-toastify"
+import { useRouter } from 'next/navigation'
 
 
+
+const cloudinaryPreset = 'band_wagon';
+const cloudinaryCloudName = 'dx0rctl2g';
 
 
 const CreatePage = () => {
+    const [artistName, setArtistName] = useState('');
+    const [location, setLocation] = useState('');
+    const [bio, setBio] = useState('');
+    const [image, setImage] = useState(null);
     const [genres, setGenres] = useState([]);
     const [month, setMonth] = useState('September');
     const [year, setYear] = useState('2023');
+    const [showsPerformed, setShowsPerformed] = useState('');
+    const router = useRouter()
+
 
     const toggleGenre = (genre) => {
         setGenres((prev) =>
@@ -27,12 +40,72 @@ const CreatePage = () => {
         );
     };
 
+    const handleImageChange = (e) => {
+        setImage(e.target.files[0]);
+    };
+
+    const handleUploadToCloudinary = async () => {
+        const formData = new FormData();
+        formData.append('file', image);
+        formData.append('upload_preset', cloudinaryPreset);
+
+        try {
+            const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/upload`, formData);
+            return response.data.secure_url;
+        } catch (error) {
+            console.error('Error uploading image to Cloudinary', error);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        let imageUrl = '';
+        if (image) {
+            imageUrl = await handleUploadToCloudinary();
+        }
+
+
+        const startDate = `${year}-${months.indexOf(month) + 1}-01`;
+
+        const postData = {
+            profileImage: imageUrl || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG',
+            artistName,
+            location,
+            bio,
+            startDate,
+            showsPerformed: parseInt(showsPerformed),
+            genres,
+        };
+        console.log(postData);
+
+
+
+        try {
+            const response = await fetch('/api/artist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
+            });
+
+            if (response.ok) {
+                toast.success('Artist page created successfully!');
+                router.push("/edit-page")
+            } else {
+                toast.error('Error creating artist page!');
+            }
+        } catch (error) {
+            toast.error(error.message);
+            console.error('Error creating artist page', error.message);
+        }
+    };
 
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
-
 
     const years = Array.from({ length: 10 }, (_, i) => (2023 + i).toString());
     return (
@@ -42,29 +115,61 @@ const CreatePage = () => {
                     <h2 className='heading_3_regular'>Create page</h2>
 
                     <div className={styles.person}>
-                        <Image src={profile} />
+                        <Image
+                            src={profile}
+                            alt="Profile Picture"
+                            width={120}
+                            height={120}
+                            className={styles.prodilePicture}
+                        />
                         <div className={styles.edit}>
-                            <Image src={edit} />
+                            <label htmlFor="profileImage">
+                                <Image src={edit} alt="Edit Icon" />
+                            </label>
+                            <input
+                                type="file"
+                                id="profileImage"
+                                style={{ display: 'none' }}
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
                         </div>
                     </div>
 
-                    {/* Input Fields */}
                     <div className={styles.inputSection}>
 
                         <div className={styles.inputField}>
                             <div className={styles.inputBox}>
-                                <input type="text" placeholder="Artist name" className={styles.input} />
+                                <input
+                                    type="text"
+                                    placeholder="Artist name"
+                                    className={styles.input}
+                                    value={artistName}
+                                    onChange={(e) => setArtistName(e.target.value)}
+                                />
                             </div>
                         </div>
 
                         <div className={styles.inputField}>
                             <div className={styles.inputBox}>
-                                <input type="text" placeholder="Location" className={styles.input} />
+                                <input
+                                    type="text"
+                                    placeholder="Location"
+                                    className={styles.input}
+                                    value={location}
+                                    onChange={(e) => setLocation(e.target.value)}
+                                />
                             </div>
                         </div>
                         <div className={styles.inputField}>
                             <div className={styles.inputBox}>
-                                <input type="text" placeholder="bio" className={styles.input} />
+                                <input
+                                    type="text"
+                                    placeholder="Bio"
+                                    className={styles.input}
+                                    value={bio}
+                                    onChange={(e) => setBio(e.target.value)}
+                                />
                             </div>
                         </div>
 
@@ -101,10 +206,12 @@ const CreatePage = () => {
                         </div>
                         <h3>How many shows have you performed</h3>
                         <div className={styles.selectWrapper}>
-                            <select className={styles.select}>
+                            <select className={styles.select} value={showsPerformed}
+                                onChange={(e) => setShowsPerformed(e.target.value)}
+                            >
                                 <option className={styles.options}>Select shows</option>
-                                <option className={styles.options}>1-10</option>
-                                <option className={styles.options}>10-20</option>
+                                <option className={styles.options} value="1-10">1-10</option>
+                                <option className={styles.options} value="1-20">10-20</option>
                             </select>
                         </div>
 
@@ -214,7 +321,7 @@ const CreatePage = () => {
                             </button>
                         </div>
                         <div className={styles.btn_2}>
-                            <button>
+                            <button onClick={handleSubmit}>
                                 Done
                             </button>
                         </div>

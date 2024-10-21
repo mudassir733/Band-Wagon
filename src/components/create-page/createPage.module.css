@@ -353,3 +353,7 @@
     cursor: pointer;
     color: var(--white-color);
 }
+
+.file {
+    background-color: transparent;
+}
