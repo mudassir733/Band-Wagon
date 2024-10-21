@@ -15,23 +15,24 @@ import { FaMoon } from "react-icons/fa6";
 import Sidebar from '../sidebar/Sidebar';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 
 const Setting = () => {
     const { data: session } = useSession()
     const [activeSection, setActiveSection] = useState('changeEmail');
+    const router = useRouter()
     const [profile, setProfile] = useState({
         email: '',
+        password: "",
     });
 
     const [inputValues, setInputValues] = useState({
         email: '',
+        password: "",
     });
 
-    useEffect(() => {
-        console.log(session?.user);
-
-    })
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -73,55 +74,55 @@ const Setting = () => {
         }));
     };
 
+    const handleDeleteChange = (e) => {
+        setInputValues({
+            ...inputValues,
+            [e.target.name]: e.target.value,
+        });
+    };
 
 
-    const handleFormSubmit = async (e) => {
+
+    // Handle user delete account
+    const handleUserDelete = async (e) => {
         e.preventDefault();
 
-        if (!session?.user?.id) {
-            toast.error('User ID is missing');
+
+        const userId = session?.user?.id;
+
+        if (!inputValues.password) {
+            toast.error("Please enter your password");
             return;
         }
 
-
         try {
-            const response = await fetch(`/api/users/${session.user.id}`, {
-                method: 'PUT',
+            const res = await fetch(`/api/users/${userId}`, {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    email: inputValues.email || profile.email,
-                }),
+                body: JSON.stringify({ password: inputValues.password }),
             });
 
-            if (response.ok) {
-                const updatedProfile = await response.json();
-                console.log("Updated profile", updatedProfile);
+            const data = await res.json();
 
-                toast.success("Profile updated successfully!");
+            if (res.ok) {
+                toast.success("Account deleted successfully");
 
-
-                setProfile({
-                    email: updatedProfile.email,
-                });
-
-                setInputValues({
-                    email: '',
-                });
-
-                await fetch('/api/auth/session?update');
+                signOut();
+                router.push("/onboarding")
             } else {
-                const errorData = await response.json();
-                toast.error(errorData.message || 'Error updating profile');
+                toast.error(data.message);
             }
         } catch (error) {
-            console.error('Error updating profile:', error);
-            toast.error('Failed to update profile. Please try again later.');
-        } finally {
-            setIsSubmitting(false);
+            console.error("Error deleting account:", error);
+            toast.error("An error occurred while deleting your account");
         }
     };
+
+
+
+
 
     const [switchStates, setSwitchStates] = useState({
         radius: false,
@@ -143,7 +144,7 @@ const Setting = () => {
             case 'changeEmail':
                 return (
                     <div className={styles.content}>
-                        <form className={styles.form} onSubmit={handleFormSubmit}>
+                        <form className={styles.form} onSubmit={handleUserDelete}>
                             <div className={styles.heading}>
                                 <h3>Change email</h3>
                             </div>
@@ -206,7 +207,7 @@ const Setting = () => {
             case 'deleteAccount':
                 return (
                     <div className={styles.content}>
-                        <form className={styles.form}>
+                        <form className={styles.form} onSubmit={handleUserDelete}>
                             <div className={styles.heading}>
                                 <h3>Delete Account</h3>
                             </div>
@@ -214,13 +215,18 @@ const Setting = () => {
                                 <div>
                                     <RiLockPasswordLine color='#525252' />
                                 </div>
-                                <input type="password" className={styles.input} placeholder="password" />
+                                <input type="password"
+                                    onChange={handleDeleteChange}
+                                    value={inputValues.password}
+                                    name='password'
+                                    className={styles.input}
+                                    placeholder="Enter your password" />
                                 <div>
                                     <IoIosEye color='#525252' />
                                 </div>
 
                             </div>
-                            <button className={styles.btn}>Delete my account</button>
+                            <button className={styles.btn} type='submit'>Delete my account</button>
                         </form>
                     </div>
                 );

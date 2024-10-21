@@ -1,5 +1,6 @@
 import connect from '../../../../utils/db/connect.js';
 import User from '../../../../models/user.model.js';
+import bcrypt from "bcrypt"
 import { ObjectId } from 'mongodb';
 
 export async function GET(req, { params }) {
@@ -105,6 +106,58 @@ export async function PUT(req, { params }) {
         );
     } catch (error) {
         console.error('Error updating user:', error.message);
+        return new Response(JSON.stringify({ message: 'Internal server error' }), {
+            status: 500,
+        });
+    }
+}
+
+
+
+
+export async function DELETE(req, { params }) {
+    const { id } = params;
+
+    try {
+
+        await connect();
+
+
+        const { password } = await req.json();
+
+
+        if (!ObjectId.isValid(id)) {
+            return new Response(JSON.stringify({ message: 'Invalid user ID' }), {
+                status: 400,
+            });
+        }
+
+
+        const user = await User.findById(id);
+        if (!user) {
+            return new Response(JSON.stringify({ message: 'User not found' }), {
+                status: 404,
+            });
+        }
+
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return new Response(JSON.stringify({ message: 'Invalid password' }), {
+                status: 400,
+            });
+        }
+
+
+        await User.findByIdAndDelete(id);
+
+        return new Response(
+            JSON.stringify({ message: 'User deleted successfully', id }),
+            { status: 200 }
+        );
+
+    } catch (error) {
+        console.error('Error deleting user:', error.message);
         return new Response(JSON.stringify({ message: 'Internal server error' }), {
             status: 500,
         });

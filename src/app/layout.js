@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
           <AuthChecker>{children}</AuthChecker>
           <ToastContainer
             position="top-center"
-            autoClose={3000}
+            autoClose={2000}
             hideProgressBar={false}
             closeOnClick
             pauseOnHover={false}
