@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "./setting.module.css"
 import Image from 'next/image';
 import rightChev from "../../../public/chevron_right.svg"
@@ -13,14 +13,116 @@ import { IoIosEye } from "react-icons/io";
 import { LuSunMedium } from "react-icons/lu";
 import { FaMoon } from "react-icons/fa6";
 import Sidebar from '../sidebar/Sidebar';
-
-
-
-
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-toastify';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 
 const Setting = () => {
+    const { data: session } = useSession()
     const [activeSection, setActiveSection] = useState('changeEmail');
+    const router = useRouter()
+    const [profile, setProfile] = useState({
+        email: '',
+        password: "",
+    });
+
+    const [inputValues, setInputValues] = useState({
+        email: '',
+        password: "",
+    });
+
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (!session?.user?.id) return;
+
+            try {
+                const res = await fetch(`/api/users/${session.user.id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setProfile({
+                        email: data.email || '',
+                    });
+
+                    setInputValues({
+                        email: '',
+
+                    });
+                } else {
+                    toast.error('Failed to load profile data');
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                toast.error('An error occurred while fetching profile data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [session?.user?.id]);
+
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setInputValues((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleDeleteChange = (e) => {
+        setInputValues({
+            ...inputValues,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+
+
+    // Handle user delete account
+    const handleUserDelete = async (e) => {
+        e.preventDefault();
+
+
+        const userId = session?.user?.id;
+
+        if (!inputValues.password) {
+            toast.error("Please enter your password");
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: inputValues.password }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                toast.success("Account deleted successfully");
+
+                signOut();
+                router.push("/onboarding")
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.error("Error deleting account:", error);
+            toast.error("An error occurred while deleting your account");
+        }
+    };
+
+
+
+
 
     const [switchStates, setSwitchStates] = useState({
         radius: false,
@@ -33,7 +135,7 @@ const Setting = () => {
     const toggleSwitch = (switchKey) => {
         setSwitchStates((prevStates) => ({
             ...prevStates,
-            [switchKey]: !prevStates[switchKey], // Toggle the specific switch
+            [switchKey]: !prevStates[switchKey],
         }));
     };
 
@@ -42,34 +144,17 @@ const Setting = () => {
             case 'changeEmail':
                 return (
                     <div className={styles.content}>
-                        <form className={styles.form}>
+                        <form className={styles.form} onSubmit={handleUserDelete}>
                             <div className={styles.heading}>
                                 <h3>Change email</h3>
                             </div>
                             <div className={styles.input_box}>
                                 <div>
                                     <MdOutlineMailOutline color='#525252' />
-                                </div>
-                                <input className={styles.input} autoComplete='off' type="email" placeholder="Current email" />
-                            </div>
-
-                            <div className={styles.input_box}>
-                                <div>
-                                    <MdOutlineMailOutline color='#525252' />
 
                                 </div>
-                                <input className={styles.input} type="email" autoComplete='off' placeholder="New email" />
-                            </div>
-                            <div className={styles.input_box}>
-                                <div>
-
-                                    <RiLockPasswordLine color='#525252' />
-                                </div>
-                                <input className={styles.input} type="password" autoComplete='off' placeholder="Password" />
-                                <div>
-                                    <IoIosEye color='#525252' />
-                                </div>
-
+                                <input className={styles.input} name='email' type="email"
+                                    id='email' autoComplete='off' placeholder="New email" value={inputValues.email} onChange={handleInputChange} />
                             </div>
                             <button type="submit" className={styles.btn}>Save changes</button>
                         </form>
@@ -122,7 +207,7 @@ const Setting = () => {
             case 'deleteAccount':
                 return (
                     <div className={styles.content}>
-                        <form className={styles.form}>
+                        <form className={styles.form} onSubmit={handleUserDelete}>
                             <div className={styles.heading}>
                                 <h3>Delete Account</h3>
                             </div>
@@ -130,13 +215,18 @@ const Setting = () => {
                                 <div>
                                     <RiLockPasswordLine color='#525252' />
                                 </div>
-                                <input type="password" className={styles.input} placeholder="password" />
+                                <input type="password"
+                                    onChange={handleDeleteChange}
+                                    value={inputValues.password}
+                                    name='password'
+                                    className={styles.input}
+                                    placeholder="Enter your password" />
                                 <div>
                                     <IoIosEye color='#525252' />
                                 </div>
 
                             </div>
-                            <button className={styles.btn}>Delete my account</button>
+                            <button className={styles.btn} type='submit'>Delete my account</button>
                         </form>
                     </div>
                 );

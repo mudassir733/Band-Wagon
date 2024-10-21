@@ -35,10 +35,12 @@ const handler = NextAuth({
                 }
 
                 return {
+
                     id: user._id,
                     name: user.username,
                     email: user.email,
                     profileImage: user.profileImage || null,
+
                 };
             },
         }),
@@ -58,6 +60,7 @@ const handler = NextAuth({
 
                 if (dbUser) {
                     token.id = dbUser._id;
+                    token.newEmail = dbUser.newEmail;
                 } else {
                     const newUser = await User.create({
                         email: user.email,

@@ -52,7 +52,6 @@ const SignUp = () => {
         if (response.status === 201) {
           toast.success("User created successfully!");
           router.push("/login")
-          // Automatically log in the user
           const { email, password } = values;
           const signInResult = await signIn('credentials', {
             redirect: false,
@@ -63,7 +62,7 @@ const SignUp = () => {
           if (signInResult?.error) {
             toast.error('Sign in failed after registration. Please login manually.');
           } else {
-            router.push('/');
+            router.push('/login');
           }
         } else {
           const errorMessage = await response.text();

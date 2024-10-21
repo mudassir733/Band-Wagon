@@ -4,6 +4,7 @@ import Image from 'next/image'
 import location from "../../../public/create page.svg"
 import { FaRegCheckCircle } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
+import Link from "next/link"
 
 const ArtistPageManagement = () => {
     return (
@@ -34,9 +35,11 @@ const ArtistPageManagement = () => {
 
                                 <div className={styles.btn}>
                                     <span><IoMdAdd /></span>
-                                    <button>
-                                        Create Page
-                                    </button>
+                                    <Link href="/create-page">
+                                        <button>
+                                            Create Page
+                                        </button>
+                                    </Link>
                                 </div>
                             </ul>
                         </div>
