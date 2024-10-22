@@ -1,0 +1,114 @@
+.container {
+    background-color: black;
+    color: white;
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.mid_section {
+    width: 100%;
+    margin-left: 315px;
+    border-left: 1px solid #A3A3A3;
+    height: fit-content;
+}
+
+.mid_section h2 {
+    padding: 54px 0 0 36px;
+}
+
+.column {
+    width: 531px;
+    height: fit-content;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-left: 104px;
+    margin-top: 54px;
+}
+
+.pageBox {
+    width: 100%;
+    height: fit-content;
+    border-radius: 12px;
+    background: #2A2B2F;
+    padding: 50px 0;
+
+}
+
+
+.person {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+}
+
+.edit {
+    width: 32px;
+    height: 32px;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    top: 61%;
+    right: 39%;
+}
+
+.title {
+    width: 100%;
+    text-align: center;
+}
+
+.button_box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 37px;
+}
+
+.link_btn {
+    display: flex;
+    padding: 10px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 100px;
+    border: 1px solid #A3A3A3;
+}
+
+
+.btn_box {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
+}
+
+.btn {
+    display: flex;
+    width: 378.43px;
+    padding: 10px 24px 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 100px;
+    background: #1ED760;
+    display: flex;
+    margin-top: 40px;
+    cursor: pointer;
+}
+
+.profilePicture {
+    border-radius: 50%;
+    height: 100px !important;
+    object-fit: cover;
+    width: 100px !important;
+}
