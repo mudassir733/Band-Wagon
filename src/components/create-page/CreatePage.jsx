@@ -15,7 +15,8 @@ import { IoMdAdd } from "react-icons/io";
 import axios from 'axios'
 import { toast } from "react-toastify"
 import { useRouter } from 'next/navigation'
-
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 
 const cloudinaryPreset = 'band_wagon';
@@ -28,11 +29,9 @@ const CreatePage = () => {
     const [bio, setBio] = useState('');
     const [image, setImage] = useState(null);
     const [genres, setGenres] = useState([]);
-    const [month, setMonth] = useState('September');
-    const [year, setYear] = useState('2023');
+    const [startDate, setStartDate] = useState(new Date());  // DatePicker state
     const [showsPerformed, setShowsPerformed] = useState('');
-    const router = useRouter()
-
+    const router = useRouter();
 
     const toggleGenre = (genre) => {
         setGenres((prev) =>
@@ -65,21 +64,18 @@ const CreatePage = () => {
             imageUrl = await handleUploadToCloudinary();
         }
 
-
-        const startDate = `${year}-${months.indexOf(month) + 1}-01`;
+        const formattedStartDate = startDate.toISOString().split('T')[0];
 
         const postData = {
             profileImage: imageUrl || 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG',
             artistName,
             location,
             bio,
-            startDate,
+            startDate: formattedStartDate,
             showsPerformed: parseInt(showsPerformed),
             genres,
         };
         console.log(postData);
-
-
 
         try {
             const response = await fetch('/api/artist', {
@@ -92,7 +88,7 @@ const CreatePage = () => {
 
             if (response.ok) {
                 toast.success('Artist page created successfully!');
-                router.push("/edit-page")
+                router.push("/edit-page");
             } else {
                 toast.error('Error creating artist page!');
             }
@@ -102,12 +98,6 @@ const CreatePage = () => {
         }
     };
 
-    const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-
-    const years = Array.from({ length: 10 }, (_, i) => (2023 + i).toString());
     return (
         <div className={styles.container}>
             <div className={styles.mid_section}>
@@ -180,30 +170,16 @@ const CreatePage = () => {
                         <h3>When did you start performing</h3>
                         <label className={styles.label}>Start date</label>
                         <div className={styles.selectGroup}>
-                            <div className={styles.selectWrapper}>
-                                <select
-                                    value={month}
-                                    onChange={(e) => setMonth(e.target.value)}
-                                    className={styles.select}
-                                >
-                                    {months.map((m) => (
-                                        <option key={m} value={m} className={styles.options}>{m}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className={styles.selectWrapper}>
-                                <select
-                                    value={year}
-                                    onChange={(e) => setYear(e.target.value)}
-                                    className={styles.select}
-                                >
-                                    {years.map((y) => (
-                                        <option key={y} value={y} className={styles.options}>{y}</option>
-                                    ))}
-                                </select>
-
+                            <div className={styles.inputBox}>
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={(date) => setStartDate(date)}
+                                    dateFormat="yyyy-MM-dd"
+                                    className={styles.datePicker}
+                                />
                             </div>
                         </div>
+
                         <h3>How many shows have you performed</h3>
                         <div className={styles.selectWrapper}>
                             <select className={styles.select} value={showsPerformed}
@@ -211,7 +187,7 @@ const CreatePage = () => {
                             >
                                 <option className={styles.options}>Select shows</option>
                                 <option className={styles.options} value="1-10">1-10</option>
-                                <option className={styles.options} value="1-20">10-20</option>
+                                <option className={styles.options} value="10-20">10-20</option>
                             </select>
                         </div>
 

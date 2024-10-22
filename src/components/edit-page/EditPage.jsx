@@ -80,6 +80,9 @@ const EditPage = () => {
                                     <button className={styles.link_btn}>Past Shows</button>
                                 </Link>
                             </div>
+
+
+
                         </div>
                     ))}
 
