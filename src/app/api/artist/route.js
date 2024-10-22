@@ -1,4 +1,3 @@
-
 import ArtistsPage from "../../../models/artist.model.js";
 import connect from "../../../utils/db/connect.js";
 
@@ -38,16 +37,28 @@ export async function POST(req) {
 
 
 
-// GET: Fetch Artists
-export async function GET(req, { params }) {
-
-
-    await connect();
+export async function GET() {
     try {
-        const artists = await ArtistsPage.find();
-        return new Response(JSON.stringify(artists), { status: 200 });
+        await connect();
+
+        const artists = await ArtistsPage.find().lean().sort({ createdAt: -1 });
+
+        if (!artists || artists.length === 0) {
+            return new Response(
+                JSON.stringify({ message: 'No artists found' }),
+                { status: 404 }
+            );
+        }
+
+        return new Response(JSON.stringify(artists), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+        });
     } catch (error) {
-        console.error(error);
-        return new Response(JSON.stringify({ error: "Failed to fetch artists" }), { status: 500 });
+        console.error("Error fetching artists:", error);
+        return new Response(
+            JSON.stringify({ error: "Failed to fetch artists" }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
     }
 }

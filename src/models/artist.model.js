@@ -3,17 +3,15 @@ const mongoose = require('mongoose');
 const artistSchema = new mongoose.Schema({
     profileImage: {
         type: String,
-        required: true,
+        required: false,
     },
     artistName: {
         type: String,
         required: true,
-        trim: true
     },
     location: {
         type: String,
         required: true,
-        trim: true
     },
     bio: {
         type: String,
@@ -29,17 +27,20 @@ const artistSchema = new mongoose.Schema({
         required: true,
         default: 0,
     },
-    genre: {
+    genres: {
         type: [String],
+        enum: ['Blues', 'Classical', 'Country', 'EDM', 'Folk', 'Funk', 'Hip-Hop', 'Jazz', 'Latin', 'Metal', 'Pop', 'Punk', 'Reggae', 'R&B', 'Rock', 'Soul'],
+        validate: {
+            validator: function (array) {
+                return array.length >= 1;
+            },
+            message: 'At least one genre must be selected',
+        },
         required: true,
-        enum: ['Blues', 'Classical', 'Country', 'EDM', 'Folk', 'Funk', 'Hip-Hop', 'Jazz', 'Latin', 'Metal', 'Pop', 'Punk', 'Reggae', 'R&B', 'Rock', 'Soul']
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
-});
+}, { timestamps: true });
 
-const ArtistsPage = mongoose.model('Artist-Page', artistSchema);
+const ArtistsPage =
+    mongoose.models.ArtistsPage || mongoose.model('ArtistsPage', artistSchema);
 
-export default ArtistsPage
+export default ArtistsPage;
