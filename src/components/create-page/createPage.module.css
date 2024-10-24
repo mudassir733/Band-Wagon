@@ -375,3 +375,10 @@
     background-color: transparent;
     outline: none;
 }
+
+.artistProfile {
+    border-radius: 50% !important;
+    height: 60px;
+    object-fit: cover;
+    width: 60px;
+}

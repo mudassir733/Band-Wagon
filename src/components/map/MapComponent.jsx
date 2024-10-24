@@ -6,6 +6,8 @@ import person from "../../../public/Profile.svg";
 import Image from 'next/image';
 import verified from "../../../public/new_releases.svg";
 import location from "../../../public/location_on.svg";
+import { useSession } from 'next-auth/react';
+
 
 const containerStyle = {
     width: '100%',
@@ -17,13 +19,7 @@ const defaultCenter = {
     lng: -4.191635586788259,
 };
 
-const markers = [
-    { lat: 37.4382777417916, lng: -4.198114354045142, info: 'Location: Zargilla Baja' },
-    { lat: 37.479604848045184, lng: -4.233996265465776, info: 'Location: Another Place' },
-    { lat: 37.48042354247826, lng: -4.183197912495632, info: 'Location: Las Angosturas' },
-    { lat: 37.46726658097601, lng: -4.181451226535549, info: 'Location: Azores' },
-    { lat: 37.50133596699067, lng: -4.21476371707949, info: 'Location: El Esparragal' }
-];
+
 
 
 const darkThemeStyles = [
@@ -63,10 +59,17 @@ const lightThemeStyles = [
 const imagePath = '/marker.png';
 
 const GoogleMaps = () => {
+    const { data: session } = useSession()
     const [map, setMap] = useState(null);
+    const [artists, setArtists] = useState([]);
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [activeMarker, setActiveMarker] = useState(null);
-    const [markerIcons, setMarkerIcons] = useState({}); // State for marker icons
+    const [markerIcons, setMarkerIcons] = useState({});
+    const [Isprofile, setIsProfile] = useState({
+        profileImage: "",
+        location: "",
+        name: "",
+    })
 
     const onLoad = useCallback((mapInstance) => {
         setMap(mapInstance);
@@ -85,8 +88,8 @@ const GoogleMaps = () => {
         glowSpread = 3,
         imageScale = 40,
         pinRoundness = 10,
-        glowColor = '#D76020', // Example glow color
-        stemColor = '#D76020', // Example stem color
+        glowColor = '#D76020',
+        stemColor = '#D76020',
     }) => {
         const image = await loadImage(imagePath);
 
@@ -101,12 +104,12 @@ const GoogleMaps = () => {
 
         // Draw the glow effect
         context.fillStyle = glowColor;
-        context.globalAlpha = 0.5; // Adjust for transparency
+        context.globalAlpha = 0.5;
         context.beginPath();
         const glowRadius = imageScale / 2 + glowSize;
         context.arc(markerSize.width / 2, markerSize.height / 2 + padding, glowRadius, 0, 2 * Math.PI);
         context.fill();
-        context.globalAlpha = 1; // Reset transparency
+        context.globalAlpha = 1;
 
         // Draw the image
         context.save();
@@ -145,20 +148,43 @@ const GoogleMaps = () => {
     useEffect(() => {
         const loadMarkers = async () => {
             const icons = {};
-            for (const marker of markers) {
-                icons[`${marker.lat},${marker.lng}`] = await createCustomMarkerBitmap({
-                    imagePath: '/marker.png', // Path to your marker image
-                });
+            for (const artist of artists) {
+                icons[`${artist.location},${artist.location}`] = await createCustomMarkerBitmap('/marker.png');
             }
             setMarkerIcons(icons);
+            console.log(icons);
+
         };
 
-        loadMarkers();
-    }, []); // Load markers on mount
+        if (artists.length > 0) {
+            loadMarkers();
+        }
+    }, [artists]);
 
     const toggleTheme = () => {
         setIsDarkTheme((prev) => !prev);
     };
+
+
+    // Fetch artist data
+    useEffect(() => {
+        const fetchArtists = async () => {
+            try {
+                const response = await fetch('/api/users'); // Endpoint to fetch all artists with role 'artist'
+                console.log(response);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const artistData = data.filter((artist) => artist.role === 'artist');
+                    setArtists(artistData);
+                }
+            } catch (error) {
+                console.error('Error fetching artist data:', error);
+            }
+        };
+
+        fetchArtists();
+    }, []);
 
     return (
         <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
@@ -176,28 +202,28 @@ const GoogleMaps = () => {
                     onLoad={onLoad}
                     onUnmount={onUnmount}
                 >
-                    {markers.map((marker, index) => (
+                    {artists.map((artist, index) => (
                         <Marker
                             key={index}
-                            position={{ lat: marker.lat, lng: marker.lng }}
-                            icon={markerIcons[`${marker.lat},${marker.lng}`]} // Use the loaded custom icon
-                            onClick={() => setActiveMarker(marker)}
+                            position={{ lat: artist.location, lng: artist.location }}
+                            icon={markerIcons[`${artist.location.lat},${artist.location.lng}`]} // Use the loaded custom icon
+                            onClick={() => setActiveMarker(artist)}
                         />
                     ))}
 
                     {activeMarker && (
                         <InfoWindow
-                            position={{ lat: activeMarker.lat, lng: activeMarker.lng }}
+                            position={{ lat: activeMarker.location.lat, lng: activeMarker.location.lng }}
                             onCloseClick={() => setActiveMarker(null)}
                         >
                             <div className={styles.model}>
                                 <div className={styles.model_flex}>
                                     <div className={styles.left_col}>
-                                        <Image src={person} className={styles.img} />
+                                        <Image src={activeMarker.profileImage || person} className={styles.img} width={100} height={100} />
                                     </div>
-                                    <div className={styles.righ_col}>
+                                    <div className={styles.right_col}>
                                         <div className={styles.title}>
-                                            <h1>Allen Ruppersberg</h1>
+                                            <h1>{activeMarker.name}</h1>
                                             <Image src={verified} />
                                         </div>
                                         <div className={styles.info_artist}>
@@ -205,7 +231,7 @@ const GoogleMaps = () => {
                                                 <div>
                                                     <Image src={location} />
                                                 </div>
-                                                <p>New York City</p>
+                                                <p>{activeMarker.location.name}</p>
                                             </div>
                                             {/* Additional info sections */}
                                         </div>

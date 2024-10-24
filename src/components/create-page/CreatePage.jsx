@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from "./createPage.module.css"
 import edit from "../../../public/edit-pen.png"
-import profile from "../../../public/profile-screen.svg"
+import profileImg from "../../../public/profile-screen.svg"
 import Image from 'next/image'
 import facebook from "../../../public/facebook.svg"
 import twitter from "../../../public/twitter.svg"
@@ -17,6 +17,7 @@ import { toast } from "react-toastify"
 import { useRouter } from 'next/navigation'
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useSession } from 'next-auth/react'
 
 
 const cloudinaryPreset = 'band_wagon';
@@ -24,6 +25,12 @@ const cloudinaryCloudName = 'dx0rctl2g';
 
 
 const CreatePage = () => {
+    const { data: session } = useSession()
+    const [profile, setProfile] = useState({
+        name: "",
+        username: "",
+        profileImage: "",
+    })
     const [artistName, setArtistName] = useState('');
     const [location, setLocation] = useState('');
     const [bio, setBio] = useState('');
@@ -98,6 +105,40 @@ const CreatePage = () => {
         }
     };
 
+
+
+    // Getting the user data
+    useEffect(() => {
+        const getUserData = async () => {
+            if (!session?.user.id) return;
+            console.log(session?.user?.id);
+
+
+            try {
+                const response = await fetch(`/api/users/${session.user.id}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    setProfile({
+                        name: data.name,
+                        username: data.username,
+                        profileImage: data.profileImage,
+                    })
+
+
+                    console.log(data.name);
+
+
+                }
+            } catch (error) {
+                console.log("Error while getting the useres data:", error.message);
+
+            }
+
+        }
+
+        getUserData()
+    }, [session?.user?.id])
+
     return (
         <div className={styles.container}>
             <div className={styles.mid_section}>
@@ -106,7 +147,7 @@ const CreatePage = () => {
 
                     <div className={styles.person}>
                         <Image
-                            src={profile}
+                            src={profileImg}
                             alt="Profile Picture"
                             width={120}
                             height={120}
@@ -268,15 +309,15 @@ const CreatePage = () => {
                         <div className={styles.user_container}>
                             <div className={styles.user_flex}>
                                 <div>
-                                    <Image src={user} width={60} height={60} />
+                                    <Image src={profile.profileImage} width={60} height={60} className={styles.artistProfile} />
                                 </div>
                                 <div className={styles.list_content}>
                                     <li>
-                                        <h6 className='heading_6_regular'>Andy Warhool</h6>
+                                        <h6 className='heading_6_regular'>{profile.name}</h6>
                                         <Image src={verify} />
                                     </li>
                                     <div>
-                                        <span className='p_x_regular'>andywarhool234</span>
+                                        <span className='p_x_regular'>{profile.username}</span>
                                     </div>
                                 </div>
 
