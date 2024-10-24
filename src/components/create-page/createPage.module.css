@@ -353,3 +353,32 @@
     cursor: pointer;
     color: var(--white-color);
 }
+
+.file {
+    background-color: transparent;
+}
+
+.datePicker {
+    background-color: transparent;
+    outline: none;
+    width: 100%;
+}
+
+.selectGroup {
+    display: flex;
+    width: 100%;
+    height: 42px;
+    padding: 10px 14px;
+    gap: 8px;
+    border-radius: 100px;
+    border: 1px solid #272727;
+    background-color: transparent;
+    outline: none;
+}
+
+.artistProfile {
+    border-radius: 50% !important;
+    height: 60px;
+    object-fit: cover;
+    width: 60px;
+}

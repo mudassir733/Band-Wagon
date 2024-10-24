@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from "./artistPageManagement.module.css"
 import Image from 'next/image'
 import location from "../../../public/create page.svg"
@@ -7,6 +7,27 @@ import { IoMdAdd } from "react-icons/io";
 import Link from "next/link"
 
 const ArtistPageManagement = () => {
+    const [hasArtist, setHasArtist] = useState(false)
+
+    useEffect(() => {
+        const checkHasArtist = async () => {
+            try {
+                const response = await fetch("/api/artist")
+                console.log(response);
+
+                if (response.ok) {
+                    setHasArtist(true)
+                }
+            } catch (error) {
+                console.log("Error fetching artist data:", error.message);
+
+            }
+
+        }
+
+
+        checkHasArtist()
+    })
     return (
         <div className={styles.container}>
             <div className={styles.mid_section}>
@@ -41,6 +62,17 @@ const ArtistPageManagement = () => {
                                         </button>
                                     </Link>
                                 </div>
+
+                                {(hasArtist && (
+                                    <div className={styles.btn1}>
+                                        <span><IoMdAdd /></span>
+                                        <Link href="/edit-page">
+                                            <button>
+                                                View Page
+                                            </button>
+                                        </Link>
+                                    </div>
+                                ))}
                             </ul>
                         </div>
                     </div>

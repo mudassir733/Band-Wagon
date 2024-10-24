@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '../header/Header'
 import styles from "./artistProfile.module.css"
 import Image from "next/image"
@@ -18,10 +18,12 @@ import icon4 from "../../../public/twitter.svg"
 import doller from "../../../public/pay_doller.svg"
 import vector from "../../../public/Vector.svg"
 import CheckInModel from "../../components/check-in/CheckInModel"
+import { useSession } from 'next-auth/react'
 
 
 
 const ArtistProfile = () => {
+
     return (
         <>
             <Header />

@@ -77,3 +77,19 @@
     margin-top: 40px;
     cursor: pointer;
 }
+
+.btn1 {
+    display: flex;
+    width: 378.43px;
+    padding: 10px 24px 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 100px;
+    background: transparent;
+    border: 1px solid #1ED760;
+    display: flex;
+    margin-top: 40px;
+    cursor: pointer;
+    color: var(--primary-color);
+}
