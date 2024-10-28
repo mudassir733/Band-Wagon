@@ -20,12 +20,10 @@ const ShowSchema = new mongoose.Schema({
     latitude: {
         type: Number,
         required: false,
-        default: null,
     },
     longitude: {
         type: Number,
         required: false,
-        default: null,
     },
     location: {
         type: String,
