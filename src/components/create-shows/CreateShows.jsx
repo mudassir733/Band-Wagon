@@ -4,6 +4,7 @@ import Image from 'next/image'
 import penBorder from "../../../public/border_color.svg"
 import { GoogleMap, useLoadScript, Marker, Autocomplete } from '@react-google-maps/api';
 import { toast } from "react-toastify"
+import { useSession } from 'next-auth/react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -13,6 +14,7 @@ const CreateShows = () => {
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
         libraries,
     });
+    const { data: session } = useSession();
     const [showData, setShowData] = useState({
         name: '',
         bio: '',
@@ -109,6 +111,7 @@ const CreateShows = () => {
                     ...showData,
                     date: showData.date.toISOString().split('T')[0],
                     image: imageUrl,
+                    userId: session?.user?.id
                 }),
             });
 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const ShowSchema = new mongoose.Schema({
+const showSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -45,6 +45,6 @@ const ShowSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const Show = mongoose.models.Show || mongoose.model('Show', ShowSchema);
+const Show = mongoose.models.Show || mongoose.model('Show', showSchema);
 
 export default Show;
