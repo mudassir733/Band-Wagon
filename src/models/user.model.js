@@ -39,6 +39,12 @@ const userSchema = new mongoose.Schema({
         enum: ["user", "artist"],
         default: "user",
     },
+    shows: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Show',
+        },
+    ],
     location: {
         type: String,
         required: false,

@@ -150,7 +150,7 @@
     border-bottom: 1px solid #A3A3A3;
     padding-bottom: 5px;
     position: relative;
-    margin-bottom: 150px;
+    margin-bottom: 30px;
 }
 
 .genre_box span {
@@ -159,7 +159,7 @@
 
 
 .select_box {
-    background-color: var(--black-color);
+    background-color: var(--white-color);
     outline: none;
     border: 1px solid #A3A3A3;
     width: 100%;
@@ -168,9 +168,17 @@
     border-radius: 10px;
     left: 0;
     bottom: -110px;
-    color: var(--white-color);
+
 }
 
 .select_box option {
-    color: var(--white-color);
+    color: var(--black-color);
+}
+
+.image_upload_box label {
+    cursor: pointer;
+}
+
+.date {
+    background-color: var(--black-color);
 }

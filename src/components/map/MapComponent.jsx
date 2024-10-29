@@ -6,7 +6,6 @@ import person from "../../../public/Profile.svg";
 import Image from 'next/image';
 import verified from "../../../public/new_releases.svg";
 import location from "../../../public/location_on.svg";
-import { useSession } from 'next-auth/react';
 
 
 const containerStyle = {
@@ -14,11 +13,7 @@ const containerStyle = {
     height: '100vh',
 };
 
-const defaultCenter = {
-    lat: 37.437041393899676,
-    lng: -4.191635586788259,
-};
-
+const defaultCenter = { lat: 30.3753, lng: 69.3451 };
 
 
 
@@ -59,17 +54,13 @@ const lightThemeStyles = [
 const imagePath = '/marker.png';
 
 const GoogleMaps = () => {
-    const { data: session } = useSession()
     const [map, setMap] = useState(null);
     const [artists, setArtists] = useState([]);
+    const [shows, setShows] = useState([]);
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [activeMarker, setActiveMarker] = useState(null);
     const [markerIcons, setMarkerIcons] = useState({});
-    const [Isprofile, setIsProfile] = useState({
-        profileImage: "",
-        location: "",
-        name: "",
-    })
+    const [activeMarkerId, setActiveMarkerId] = useState(null);
 
     const onLoad = useCallback((mapInstance) => {
         setMap(mapInstance);
@@ -166,22 +157,25 @@ const GoogleMaps = () => {
     };
 
 
-    // Fetch artist data
+    // Fetch artist and show data
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await fetch('/api/users'); // Endpoint to fetch all artists with role 'artist'
-                console.log(response);
-
+                const response = await fetch('/api/users');
                 if (response.ok) {
                     const data = await response.json();
-                    const artistData = data.filter((artist) => artist.role === 'artist');
-                    setArtists(artistData);
+                    const allShows = data.reduce((acc, artist) => {
+                        return artist.shows ? [...acc, ...artist.shows] : acc;
+                    }, []);
+                    setArtists(data);
+                    setShows(allShows);
                 }
             } catch (error) {
                 console.error('Error fetching artist data:', error);
             }
         };
+
+
 
         fetchArtists();
     }, []);
@@ -194,36 +188,74 @@ const GoogleMaps = () => {
                 </button>
                 <GoogleMap
                     mapContainerStyle={containerStyle}
-                    center={defaultCenter}
-                    zoom={12}
+                    center={
+                        activeMarker
+                            ? {
+                                lat: activeMarker.position?.lat || defaultCenter.lat,
+                                lng: activeMarker.position?.lng || defaultCenter.lng
+                            }
+                            : defaultCenter
+                    }
+                    zoom={9}
                     options={{
                         styles: isDarkTheme ? darkThemeStyles : lightThemeStyles,
                     }}
                     onLoad={onLoad}
                     onUnmount={onUnmount}
                 >
-                    {artists.map((artist, index) => (
+                    {shows.map((show, index) => (
                         <Marker
-                            key={index}
-                            position={{ lat: artist.location, lng: artist.location }}
-                            icon={markerIcons[`${artist.location.lat},${artist.location.lng}`]} // Use the loaded custom icon
-                            onClick={() => setActiveMarker(artist)}
+                            key={`show-${index}`}
+                            position={{ lat: show.latitude, lng: show.longitude }}
+                            onClick={() => setActiveMarkerId(`show-${index}`)}
                         />
                     ))}
 
-                    {activeMarker && (
+                    {artists.map((artist, index) => (
+                        <Marker
+                            key={`artist-${index}`}
+                            position={{ lat: artist.location.lat, lng: artist.location.lng }}
+                            onMouseOver={() => setActiveMarkerId(`artist-${index}`)}
+                            onMouseOut={() => setActiveMarkerId(null)}
+                        />
+                    ))}
+
+                    {activeMarkerId && (
                         <InfoWindow
-                            position={{ lat: activeMarker.location.lat, lng: activeMarker.location.lng }}
-                            onCloseClick={() => setActiveMarker(null)}
+                            position={
+                                activeMarkerId.startsWith('show-')
+                                    ? {
+                                        lat: shows[parseInt(activeMarkerId.split('-')[1])].latitude,
+                                        lng: shows[parseInt(activeMarkerId.split('-')[1])].longitude,
+                                    }
+                                    : {
+                                        lat: artists[parseInt(activeMarkerId.split('-')[1])].location.lat,
+                                        lng: artists[parseInt(activeMarkerId.split('-')[1])].location.lng,
+                                    }
+                            }
+                            onCloseClick={() => setActiveMarkerId(null)}
                         >
                             <div className={styles.model}>
                                 <div className={styles.model_flex}>
                                     <div className={styles.left_col}>
-                                        <Image src={activeMarker.profileImage || person} className={styles.img} width={100} height={100} />
+                                        <Image
+                                            src={
+                                                activeMarkerId.startsWith('artist-')
+                                                    ? artists[parseInt(activeMarkerId.split('-')[1])].profileImage || person
+                                                    : person
+                                            }
+                                            className={styles.img}
+                                            width={100}
+                                            height={100}
+                                        />
                                     </div>
                                     <div className={styles.right_col}>
                                         <div className={styles.title}>
-                                            <h1>{activeMarker.name}</h1>
+                                            <h1>
+                                                {activeMarkerId.startsWith('artist-')
+                                                    ? artists[parseInt(activeMarkerId.split('-')[1])].name
+                                                    : 'Show Location'}
+                                            </h1>
                                             <Image src={verified} />
                                         </div>
                                         <div className={styles.info_artist}>
@@ -231,9 +263,10 @@ const GoogleMaps = () => {
                                                 <div>
                                                     <Image src={location} />
                                                 </div>
-                                                <p>{activeMarker.location.name}</p>
+                                                <p>
+                                                    Location
+                                                </p>
                                             </div>
-                                            {/* Additional info sections */}
                                         </div>
                                     </div>
                                 </div>

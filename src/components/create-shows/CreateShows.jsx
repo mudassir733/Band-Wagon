@@ -1,18 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styles from "./createShows.module.css"
 import Image from 'next/image'
 import penBorder from "../../../public/border_color.svg"
-import MapComponent from '../map/MapComponent'
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
-import { Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, Marker, Autocomplete } from '@react-google-maps/api';
 import { toast } from "react-toastify"
+import { useSession } from 'next-auth/react';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
-const libraries = ['places'];
+let libraries = ['places'];
 const CreateShows = () => {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
         libraries,
     });
+    const { data: session } = useSession();
     const [showData, setShowData] = useState({
         name: '',
         bio: '',
@@ -29,10 +31,29 @@ const CreateShows = () => {
     const [loading, setLoading] = useState(false);
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
+    // Autocomplete reference
+    const autocompleteRef = useRef(null);
+
     const handleInputChange = (e) => {
+        if (!e.target || !e.target.name) return;
         const { name, value } = e.target;
         setShowData({ ...showData, [name]: value });
     };
+
+
+    const handleDateChange = (date) => {
+        setShowData((prevData) => ({
+            ...prevData,
+            date: date,
+        }));
+    };
+
+    const handleTimeChnage = (time) => {
+        setShowData((prevData) => ({
+            ...prevData,
+            time: time,
+        }));
+    }
 
     const handleImageChange = (e) => {
         setImageFile(e.target.files[0]);
@@ -42,6 +63,9 @@ const CreateShows = () => {
         const selectedGenres = Array.from(e.target.selectedOptions, option => option.value);
         setShowData({ ...showData, genres: selectedGenres });
     };
+
+
+
 
     const uploadImageToCloudinary = async () => {
         const formData = new FormData();
@@ -85,7 +109,9 @@ const CreateShows = () => {
                 },
                 body: JSON.stringify({
                     ...showData,
+                    date: showData.date.toISOString().split('T')[0],
                     image: imageUrl,
+                    userId: session?.user?.id
                 }),
             });
 
@@ -95,6 +121,17 @@ const CreateShows = () => {
             if (response.ok) {
                 toast.success('Show created successfully!');
                 console.log('Response:', responseData);
+                setShowData({
+                    name: '',
+                    bio: '',
+                    location: '',
+                    latitude: '',
+                    longitude: '',
+                    date: '',
+                    time: '',
+                    genres: [],
+                    image: '',
+                })
             } else {
                 toast.error('Failed to create show');
                 console.error('Response:', responseData);
@@ -112,16 +149,21 @@ const CreateShows = () => {
     };
 
 
-    const handlePlaceSelect = (place) => {
-        const lat = place.geometry.location.lat();
-        const lng = place.geometry.location.lng();
-        setShowData((prevData) => ({
-            ...prevData,
-            location: place.formatted_address,
-            latitude: lat,
-            longitude: lng,
-        }));
-        setSelectedLocation({ lat, lng });
+    const handlePlaceSelect = () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place && place.geometry) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            setShowData((prevData) => ({
+                ...prevData,
+                location: place.formatted_address,
+                latitude: lat,
+                longitude: lng,
+            }));
+            setSelectedLocation({ lat, lng });
+        } else {
+            console.warn("Place or geometry data is missing:", place);
+        }
     };
     if (!isLoaded) return <div>Loading...</div>;
     return (
@@ -130,12 +172,18 @@ const CreateShows = () => {
                 <div className={styles.create_page_container}>
                     <h3 className='heading_3_regular'>Create Show</h3>
 
-                    {/* Image Upload */}
+
                     <div className={styles.image_upload_box}>
-                        <div>
+                        <label htmlFor="image">
                             <Image src={penBorder} alt="Upload" />
-                        </div>
-                        <input type="file" onChange={handleImageChange} />
+                        </label>
+                        <input
+                            id="image"
+                            type="file"
+                            onChange={handleImageChange}
+                            style={{ display: 'none' }}
+                            accept="image/*"
+                        />
                     </div>
 
                     {/* Name */}
@@ -177,7 +225,8 @@ const CreateShows = () => {
                         </div>
                         <div className={styles.input_box}>
                             <Autocomplete
-                                onPlaceChanged={() => handlePlaceSelect(autocomplete.getPlace())}
+                                onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+                                onPlaceChanged={() => handlePlaceSelect()}
                                 options={{
                                     componentRestrictions: { country: 'PK' }
                                 }}
@@ -212,11 +261,12 @@ const CreateShows = () => {
                             <span className='p_small_regular'>Date</span>
                         </div>
                         <div className={styles.input_box}>
-                            <input
-                                type="date"
-                                name="date"
-                                value={showData.date}
-                                onChange={handleInputChange}
+                            <DatePicker
+                                selected={showData.date}
+                                onChange={handleDateChange}
+                                dateFormat="yyyy-MM-dd"
+                                className={styles.date}
+                                placeholderText="Select Date"
                             />
                         </div>
                     </div>
@@ -227,11 +277,13 @@ const CreateShows = () => {
                             <span className='p_small_regular'>Time</span>
                         </div>
                         <div className={styles.input_box}>
-                            <input
-                                type="time"
-                                name="time"
-                                value={showData.time}
-                                onChange={handleInputChange}
+                            <DatePicker
+                                selected={showData.time}
+                                onChange={handleTimeChnage}
+                                showTimeSelect
+                                showTimeSelectOnly
+                                dateFormat="h:mm aa"
+                                placeholderText="Select Time"
                             />
                         </div>
                     </div>
@@ -280,16 +332,13 @@ const CreateShows = () => {
                             </div>
                         )}
                     </div>
-                    {/* Map (Latitude & Longitude) */}
-                    <div className={styles.map_box}>
-                        <MapComponent />
-                    </div>
 
                     {/* Submit Button */}
                     <div className={styles.btn_box}>
                         <button onClick={handleSubmit} disabled={loading}>
                             {loading ? 'Creating Show...' : 'Create Show'}
                         </button>
+
                     </div>
                 </div>
             </div>
