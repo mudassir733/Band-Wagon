@@ -68,6 +68,22 @@ const Header = () => {
                 const data = await res.json();
                 setRole(data.role);
                 toast.success(`Role updated to ${data.role}`);
+
+                // If the new role is "artist," update verified status of user's shows
+                if (newRole === "artist") {
+                    const showUpdateResponse = await fetch(`/api/shows/updateVerifiedStatus`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: session.user.id, verified: true })
+                    });
+
+                    if (showUpdateResponse.ok) {
+                        toast.success("Verified status of your shows updated successfully.");
+                    } else {
+                        const showUpdateError = await showUpdateResponse.json();
+                        toast.error(`Failed to update shows' verified status: ${showUpdateError.message}`);
+                    }
+                }
             } else {
                 const errorData = await res.json();
                 toast.error(`Failed to update role: ${errorData.message}`);

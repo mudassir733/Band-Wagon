@@ -2,7 +2,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import styles from "./map.module.css";
-import person from "../../../public/Profile.svg";
 import Image from 'next/image';
 import verified from "../../../public/new_releases.svg";
 import location from "../../../public/location_on.svg";
@@ -53,10 +52,9 @@ const lightThemeStyles = [
 
 const imagePath = '/marker.png';
 
-const GoogleMaps = () => {
+const GoogleMaps = ({ shows }) => {
     const [map, setMap] = useState(null);
     const [artists, setArtists] = useState([]);
-    const [shows, setShows] = useState([]);
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [activeMarker, setActiveMarker] = useState(null);
     const [markerIcons, setMarkerIcons] = useState({});
@@ -164,6 +162,8 @@ const GoogleMaps = () => {
                 const response = await fetch('/api/users');
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data);
+
                     const allShows = data.reduce((acc, artist) => {
                         return artist.shows ? [...acc, ...artist.shows] : acc;
                     }, []);
@@ -237,38 +237,36 @@ const GoogleMaps = () => {
                         >
                             <div className={styles.model}>
                                 <div className={styles.model_flex}>
-                                    <div className={styles.left_col}>
-                                        <Image
-                                            src={
-                                                activeMarkerId.startsWith('artist-')
-                                                    ? artists[parseInt(activeMarkerId.split('-')[1])].profileImage || person
-                                                    : person
-                                            }
-                                            className={styles.img}
-                                            width={100}
-                                            height={100}
-                                        />
-                                    </div>
-                                    <div className={styles.right_col}>
-                                        <div className={styles.title}>
-                                            <h1>
-                                                {activeMarkerId.startsWith('artist-')
-                                                    ? artists[parseInt(activeMarkerId.split('-')[1])].name
-                                                    : 'Show Location'}
-                                            </h1>
-                                            <Image src={verified} />
+                                    {artists.map((artist, index) => (
+                                        <div className={styles.left_col} key={index}>
+                                            <Image
+                                                src={
+                                                    artist.profileImage
+                                                }
+                                                className={styles.img}
+                                                width={100}
+                                                height={100}
+                                            />
                                         </div>
-                                        <div className={styles.info_artist}>
-                                            <div className={styles.flex_box}>
-                                                <div>
-                                                    <Image src={location} />
+                                    ))}
+                                    {artists.map((artist, index) => (
+                                        <div className={styles.right_col} key={index}>
+                                            <div className={styles.title}>
+                                                <h1>
+                                                    {artist.name}
+                                                </h1>
+                                                <Image src={verified} />
+                                            </div>
+                                            <div className={styles.info_artist}>
+                                                <div className={styles.flex_box}>
+                                                    <div>
+                                                        <Image src={location} />
+                                                    </div>
+                                                    <p>{artist.location}</p>
                                                 </div>
-                                                <p>
-                                                    Location
-                                                </p>
                                             </div>
                                         </div>
-                                    </div>
+                                    ))}
                                 </div>
                             </div>
                         </InfoWindow>
