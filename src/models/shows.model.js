@@ -38,11 +38,7 @@ const showSchema = new mongoose.Schema({
         enum: ['Blues', 'Classical', 'Country', 'EDM', 'Folk', 'Funk', 'Hip-Hop', 'Jazz', 'Latin', 'Metal', 'Pop', 'Punk', 'Reggae', 'R&B', 'Rock', 'Soul'],
         required: false,
     },
-    verified: {
-        type: Boolean,
-        default: false,
-        required: false,
-    }
+
 }, { timestamps: true });
 
 const Show = mongoose.models.Show || mongoose.model('Show', showSchema);

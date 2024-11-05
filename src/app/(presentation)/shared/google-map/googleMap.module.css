@@ -1,0 +1,81 @@
+.mapContainer {
+    position: relative;
+}
+
+.btn {
+    position: absolute;
+    top: 0;
+    left: 169px;
+    z-index: 20;
+    background-color: #fff;
+    margin: 10px;
+    padding: 8px;
+    box-shadow: -0px 2px 4px 0px rgba(0, 0, 0, 0.2);
+}
+
+.model {
+    width: 371px;
+    height: fit-content;
+    padding: 10px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #2A2B2F;
+}
+
+.model_flex {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.left_col .img {
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+.righ_col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.title h1 {
+    color: #FFF;
+    font-family: Lato;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info_artist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.flex_box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flex_box p {
+    color: #A3A3A3;
+    font-family: Lato;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px;
+    /* 150% */
+}
