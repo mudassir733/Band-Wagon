@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Header from "../components/header/Header"
 import instant from "../../public/images/instant_mix.png"
 import genres from "../../public/images/genres.png"
@@ -79,7 +79,28 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimeFilter, setSelectedTimeFilter] = useState(null);
   const [filterShows, setFilterShows] = useState([]);
+  const [allShows, setAllShows] = useState([]);
   const [isFilterSelected, setIsFilterSelected] = useState(false);
+
+
+
+  // get all shows
+  useEffect(() => {
+    const fetchAllShows = async () => {
+      try {
+        const response = await fetch("/api/shows");
+        if (response.ok) {
+          const data = await response.json();
+          setAllShows(data.shows || []);
+        } else {
+          console.error("Error fetching all shows:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching all shows:", error);
+      }
+    };
+    fetchAllShows();
+  }, []);
 
   const handleGenreSelect = (genre) => {
     setSelectedGenres((prevGenres) =>
@@ -130,7 +151,7 @@ export default function Home() {
       <Header />
       <div className={styles.main_section}>
         <div className={styles.map}>
-          <MapComponent shows={filterShows} />
+          <MapComponent shows={filterShows} allShows={allShows} />
           <div className={styles.flex_nav}>
             <nav className={styles.navbar}>
               <div className={styles.flex}>
