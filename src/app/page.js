@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import Header from "../components/header/Header"
+import Header from "./(presentation)/shared/header/Header"
 import instant from "../../public/images/instant_mix.png"
 import genres from "../../public/images/genres.png"
 import schedule from "../../public/images/schedule.svg"
@@ -10,8 +10,8 @@ import tick from "../../public/images/Tick.svg"
 import unTick from "../../public/images/unTick.svg"
 import Image from 'next/image'
 import styles from './styles.module.css'
-import Sidebar from "../components/sidebar/Sidebar"
-import MapComponent from "../components/map/MapComponent"
+import Sidebar from "./(presentation)/shared/sidebar/Sidebar"
+import MapComponent from "./(presentation)/shared/google-map/GoogleMaps"
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { LuSend } from "react-icons/lu";
