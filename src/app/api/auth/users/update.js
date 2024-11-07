@@ -1,5 +1,5 @@
 import connect from '../../../utils/db/connect.js';
-import User from '../../../models/user.model.js';
+import User from '../../../(domain)/entities/user.model.js';
 import { ObjectId } from 'mongodb';
 
 export async function PUT(req) {
@@ -17,7 +17,7 @@ export async function PUT(req) {
 
         let user;
 
-        // Check if the ID is a valid MongoDB ObjectId
+
         if (ObjectId.isValid(id) && String(new ObjectId(id)) === id) {
             try {
                 user = await User.findById(new ObjectId(id));
@@ -26,7 +26,7 @@ export async function PUT(req) {
             }
         }
 
-        // If user is not found by ObjectId, try using googleId
+
         if (!user) {
             try {
                 user = await User.findOne({ googleId: id });
@@ -36,7 +36,7 @@ export async function PUT(req) {
         }
 
         if (user) {
-            // Update the user fields
+
             user.name = name;
             user.username = username;
             user.location = location;

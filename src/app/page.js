@@ -84,6 +84,9 @@ export default function Home() {
 
 
 
+
+
+
   // get all shows
   useEffect(() => {
     const fetchAllShows = async () => {
@@ -142,8 +145,6 @@ export default function Home() {
     }
     setIsFilterSelected(false);
   };
-
-
 
 
   return (

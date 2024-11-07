@@ -30,6 +30,7 @@ const GoogleMaps = ({ shows, allShows }) => {
     const [activeMarker, setActiveMarker] = useState(null);
     const [markerIcons, setMarkerIcons] = useState({});
     const [activeMarkerId, setActiveMarkerId] = useState(null);
+    const [activeData, setActiveData] = useState(null);
 
     const displayShows = shows.length > 0 ? shows : allShows;
 
@@ -135,13 +136,10 @@ const GoogleMaps = ({ shows, allShows }) => {
                 const response = await fetch('/api/users');
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
+                    console.log("Artist Data", data);
 
-                    const allShows = data.reduce((acc, artist) => {
-                        return artist.shows ? [...acc, ...artist.shows] : acc;
-                    }, []);
+
                     setArtists(data);
-                    setShows(allShows);
                 }
             } catch (error) {
                 console.error('Error fetching artist data:', error);
@@ -152,6 +150,20 @@ const GoogleMaps = ({ shows, allShows }) => {
 
         fetchArtists();
     }, []);
+
+
+    const handleMarkerClick = (id, type) => {
+        setActiveMarkerId(id);
+
+        if (type === 'show') {
+            const showData = displayShows.find((_, index) => `show-${index}` === id);
+            setActiveData(showData);
+
+        } else if (type === 'artist') {
+            const artistIndex = parseInt(id.split('-')[1], 10);
+            setActiveData(artists[artistIndex]);
+        }
+    };
 
     return (
         <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
@@ -180,7 +192,7 @@ const GoogleMaps = ({ shows, allShows }) => {
                         <Marker
                             key={`show-${index}`}
                             position={{ lat: show.latitude, lng: show.longitude }}
-                            onClick={() => setActiveMarkerId(`show-${index}`)}
+                            onClick={() => handleMarkerClick(`show-${index}`, 'show')}
                         />
                     ))}
 
@@ -188,45 +200,37 @@ const GoogleMaps = ({ shows, allShows }) => {
                         <Marker
                             key={`artist-${index}`}
                             position={{ lat: artist.location.lat, lng: artist.location.lng }}
-                            onMouseOver={() => setActiveMarkerId(`artist-${index}`)}
-                            onMouseOut={() => setActiveMarkerId(null)}
+                            onClick={() => handleMarkerClick(`artist-${index}`, 'artist')}
                         />
                     ))}
 
-                    {activeMarkerId && (
+                    {activeMarkerId && activeData && (
                         <InfoWindow
                             position={
                                 activeMarkerId.startsWith('show-')
-                                    ? {
-                                        lat: shows[parseInt(activeMarkerId.split('-')[1])].latitude,
-                                        lng: shows[parseInt(activeMarkerId.split('-')[1])].longitude,
-                                    }
-                                    : {
-                                        lat: artists[parseInt(activeMarkerId.split('-')[1])].location.lat,
-                                        lng: artists[parseInt(activeMarkerId.split('-')[1])].location.lng,
-                                    }
+                                    ? { lat: activeData.latitude, lng: activeData.longitude }
+                                    : { lat: activeData.location.lat, lng: activeData.location.lng }
                             }
                             onCloseClick={() => setActiveMarkerId(null)}
                         >
-                            <div className={styles.model}>
-                                <div className={styles.model_flex}>
-                                    {artists.map((artist, index) => (
-                                        <div className={styles.left_col} key={index}>
+                            <div className={styles.infoWindowContent}>
+                                <div className={styles.model}>
+                                    <div className={styles.model_flex}>
+                                        <div className={styles.left_col}>
                                             <Image
                                                 src={
-                                                    artist.profileImage
+                                                    artists[0].profileImage
                                                 }
                                                 className={styles.img}
                                                 width={100}
                                                 height={100}
                                             />
                                         </div>
-                                    ))}
-                                    {artists.map((artist, index) => (
-                                        <div className={styles.right_col} key={index}>
+
+                                        <div className={styles.right_col} >
                                             <div className={styles.title}>
                                                 <h1>
-                                                    {artist.name}
+                                                    {artists[0].name}
                                                 </h1>
                                                 <Image src={verified} />
                                             </div>
@@ -235,18 +239,18 @@ const GoogleMaps = ({ shows, allShows }) => {
                                                     <div>
                                                         <Image src={location} />
                                                     </div>
-                                                    <p>{artist.location}</p>
+                                                    <p>{artists[0].location}</p>
                                                 </div>
                                             </div>
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
                             </div>
                         </InfoWindow>
                     )}
                 </GoogleMap>
             </div>
-        </LoadScript>
+        </LoadScript >
     );
 };
 

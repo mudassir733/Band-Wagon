@@ -13,18 +13,20 @@ const ProfileScreen = () => {
         profileImage: '',
         name: '',
         username: '',
-        role: '',  // Include role in the state
+        role: '',
         loading: true
     });
 
 
     useEffect(() => {
         const fetchProfileData = async () => {
-            if (session?.user?.id) {
+            if (session?.user?.sub) {
                 try {
-                    const response = await fetch(`/api/users/${session.user.id}`);
+                    const response = await fetch(`/api/users/${session.user.sub}`);
                     if (response.ok) {
                         const data = await response.json();
+                        console.log("Data", data);
+
                         setProfileData({
                             profileImage: data.profileImage || '',
                             name: data.name || '',
@@ -44,7 +46,7 @@ const ProfileScreen = () => {
         };
 
         fetchProfileData();
-    }, [session?.user?.id]);
+    }, [session?.user?.sub]);
 
     if (profileData.loading) {
         return <p>Loading profile...</p>;

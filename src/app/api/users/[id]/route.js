@@ -1,5 +1,5 @@
 import connect from '../../../../utils/db/connect.js';
-import User from '../../../../models/user.model.js';
+import User from '../../../(domain)/entities/user.model.js';
 import bcrypt from "bcrypt"
 import { ObjectId } from 'mongodb';
 

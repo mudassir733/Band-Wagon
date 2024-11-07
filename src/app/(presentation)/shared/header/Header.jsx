@@ -8,7 +8,7 @@ import search from "../../../../../public/images/search.svg"
 import backArro from "../../../../../public/arrow_back.svg"
 import ProfileImg from "../../../../../public/images/Profile.svg"
 import Link from "next/link"
-import { useSession } from 'next-auth/react'
+import { useSession, getSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 
 const Header = () => {
@@ -20,10 +20,16 @@ const Header = () => {
     const [role, setRole] = useState(session?.user?.role || "user");
     const [isRoleUpdating, setIsRoleUpdating] = useState(false);
 
+    useEffect(() => {
+        console.log("Session data:", session?.user?.sub);
+
+    })
     const fetchProfile = async () => {
         if (!session?.user?.id) return;
         try {
             const res = await fetch(`/api/users/${session.user.id}`);
+            console.log(res.ok);
+
 
             if (res.ok) {
                 const data = await res.json();
@@ -40,6 +46,8 @@ const Header = () => {
         }
     };
 
+
+
     useEffect(() => {
         if (status === 'authenticated') {
             fetchProfile();
@@ -48,17 +56,20 @@ const Header = () => {
 
     // Role switch function
     const handleRoleSwitch = async () => {
-        if (!session?.user?.id) {
+        if (!session?.user?.sub) {
             toast.error('User session not found. Please log in.');
             return;
         }
 
         const newRole = role === "user" ? "artist" : "user";
         setIsRoleUpdating(true);
-        console.log(newRole)
+
+        console.log("New Role:", newRole);
+
+
 
         try {
-            const res = await fetch(`/api/users/${session.user.id}`, {
+            const res = await fetch(`/api/users/${session.user.sub}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role: newRole })
@@ -69,21 +80,25 @@ const Header = () => {
                 setRole(data.role);
                 toast.success(`Role updated to ${data.role}`);
 
-                // If the new role is "artist," update verified status of user's shows
-                if (newRole === "artist") {
-                    const showUpdateResponse = await fetch(`/api/shows/updateVerifiedStatus`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: session.user.id, verified: true })
-                    });
+                // Re-fetch the session data after role change
+                await getSession();
 
-                    if (showUpdateResponse.ok) {
-                        toast.success("Verified status of your shows updated successfully.");
-                    } else {
-                        const showUpdateError = await showUpdateResponse.json();
-                        toast.error(`Failed to update shows' verified status: ${showUpdateError.message}`);
-                    }
-                }
+                // if (newRole === "artist") {
+                //     const showUpdateResponse = await fetch(`/api/shows`, {
+                //         method: 'PUT',
+                //         headers: { 'Content-Type': 'application/json' },
+                //         body: JSON.stringify({ userId: session.user.sub })
+                //     });
+                //     console.log("Show update response", showUpdateResponse);
+
+
+                //     if (showUpdateResponse.ok) {
+                //         toast.success("Verified status of your shows updated successfully.");
+                //     } else {
+                //         const showUpdateError = await showUpdateResponse.json();
+                //         toast.error(`Failed to update shows' verified status: ${showUpdateError.message}`);
+                //     }
+                // }
             } else {
                 const errorData = await res.json();
                 toast.error(`Failed to update role: ${errorData.message}`);
@@ -121,6 +136,12 @@ const Header = () => {
     const clearRecentSearch = (index) => {
         setRecentSearches(recentSearches.filter((_, i) => i !== index));
     };
+
+
+    useEffect(() => {
+        console.log("Sessuon", session?.user?.role);
+
+    })
 
     return (
         <header className={styles.header}>

@@ -1,4 +1,4 @@
-import ArtistsPage from "../../../models/artist.model.js";
+import ArtistsPage from "../../(domain)/entities/artist.model";
 import connect from "../../../utils/db/connect.js";
 
 

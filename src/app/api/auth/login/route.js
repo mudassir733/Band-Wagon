@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcrypt';
-import connect from '../../../../utils/db/connect.js';
-import User from '../../../../models/user.model.js';
-import { signIn } from 'next-auth/react';
+import { authenticateUser, signInUser } from '../../../(application)/services/auth.service';
 
 export async function POST(req) {
     try {
@@ -10,34 +7,15 @@ export async function POST(req) {
         console.log(email, password);
 
 
-        await connect();
-
-
-        const user = await User.findOne({ email });
-        if (!user) {
-            return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
-        }
-
+        const user = await authenticateUser(email, password);
         console.log(user);
 
+        const signInResponse = await signInUser(email, password);
 
-
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-            return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
-        }
-
-        // Automatically sign in the user after successful login
-        const signInResponse = await signIn("credentials", {
-            redirect: false,
-            email,
-            password,
-        });
 
         if (signInResponse.error) {
             return NextResponse.json({ message: 'Login failed', error: signInResponse.error }, { status: 401 });
         }
-
 
         return NextResponse.json({
             message: 'Login successful',
@@ -51,6 +29,6 @@ export async function POST(req) {
 
     } catch (error) {
         console.error('Error logging in user:', error.message);
-        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ message: error.message || 'Internal server error' }, { status: 500 });
     }
 }
