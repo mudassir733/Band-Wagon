@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^5.0.3",
+    "@nextui-org/modal": "^2.0.41",
+    "@nextui-org/react": "^2.4.8",
+    "@nextui-org/system": "^2.2.6",
+    "@nextui-org/theme": "^2.2.11",
     "@react-google-maps/api": "^2.19.3",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",

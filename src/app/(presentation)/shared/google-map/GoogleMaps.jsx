@@ -29,8 +29,7 @@ const GoogleMaps = ({ shows, allShows }) => {
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [activeMarker, setActiveMarker] = useState(null);
     const [markerIcons, setMarkerIcons] = useState({});
-    const [activeMarkerId, setActiveMarkerId] = useState(null);
-    const [activeData, setActiveData] = useState(null);
+
 
     const displayShows = shows.length > 0 ? shows : allShows;
 
@@ -129,42 +128,6 @@ const GoogleMaps = ({ shows, allShows }) => {
     };
 
 
-    // Fetch artist and show data
-    useEffect(() => {
-        const fetchArtists = async () => {
-            try {
-                const response = await fetch('/api/users');
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log("Artist Data", data);
-
-
-                    setArtists(data);
-                }
-            } catch (error) {
-                console.error('Error fetching artist data:', error);
-            }
-        };
-
-
-
-        fetchArtists();
-    }, []);
-
-
-    const handleMarkerClick = (id, type) => {
-        setActiveMarkerId(id);
-
-        if (type === 'show') {
-            const showData = displayShows.find((_, index) => `show-${index}` === id);
-            setActiveData(showData);
-
-        } else if (type === 'artist') {
-            const artistIndex = parseInt(id.split('-')[1], 10);
-            setActiveData(artists[artistIndex]);
-        }
-    };
-
     return (
         <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
             <div className={styles.mapContainer}>
@@ -192,62 +155,41 @@ const GoogleMaps = ({ shows, allShows }) => {
                         <Marker
                             key={`show-${index}`}
                             position={{ lat: show.latitude, lng: show.longitude }}
-                            onClick={() => handleMarkerClick(`show-${index}`, 'show')}
+
                         />
                     ))}
 
-                    {artists.map((artist, index) => (
-                        <Marker
-                            key={`artist-${index}`}
-                            position={{ lat: artist.location.lat, lng: artist.location.lng }}
-                            onClick={() => handleMarkerClick(`artist-${index}`, 'artist')}
-                        />
-                    ))}
 
-                    {activeMarkerId && activeData && (
-                        <InfoWindow
-                            position={
-                                activeMarkerId.startsWith('show-')
-                                    ? { lat: activeData.latitude, lng: activeData.longitude }
-                                    : { lat: activeData.location.lat, lng: activeData.location.lng }
-                            }
-                            onCloseClick={() => setActiveMarkerId(null)}
-                        >
-                            <div className={styles.infoWindowContent}>
-                                <div className={styles.model}>
-                                    <div className={styles.model_flex}>
-                                        <div className={styles.left_col}>
-                                            <Image
-                                                src={
-                                                    artists[0].profileImage
-                                                }
-                                                className={styles.img}
-                                                width={100}
-                                                height={100}
-                                            />
-                                        </div>
 
-                                        <div className={styles.right_col} >
-                                            <div className={styles.title}>
-                                                <h1>
-                                                    {artists[0].name}
-                                                </h1>
-                                                <Image src={verified} />
-                                            </div>
-                                            <div className={styles.info_artist}>
-                                                <div className={styles.flex_box}>
-                                                    <div>
-                                                        <Image src={location} />
-                                                    </div>
-                                                    <p>{artists[0].location}</p>
-                                                </div>
-                                            </div>
+                    <div className={styles.infoWindowContent}>
+                        <div className={styles.model}>
+                            <div className={styles.model_flex}>
+                                <div className={styles.left_col}>
+                                    <Image
+                                        src={'/default_profile.png'}
+                                        className={styles.img}
+                                        width={100}
+                                        height={100}
+                                        alt="Profile Image"
+                                    />
+                                </div>
+                                <div className={styles.right_col}>
+                                    <div className={styles.title}>
+                                        <h1>Name</h1>
+                                        <Image src={verified} alt="Verified Icon" />
+                                    </div>
+                                    <div className={styles.info_artist}>
+                                        <div className={styles.flex_box}>
+                                            <Image src={location} alt="Location Icon" />
+                                            <p>Location</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </InfoWindow>
-                    )}
+                        </div>
+                    </div>
+
+
                 </GoogleMap>
             </div>
         </LoadScript >

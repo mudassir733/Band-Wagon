@@ -17,6 +17,7 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 
 
+
 const validationSchema = Yup.object({
     email: Yup.string()
         .email('Invalid email address')
@@ -42,7 +43,7 @@ const Login = () => {
 
             try {
                 const result = await signIn('credentials', {
-                    redirect: false, // Do not redirect automatically, handle manually
+                    redirect: false,
                     email,
                     password,
                 });

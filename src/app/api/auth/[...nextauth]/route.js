@@ -1,7 +1,9 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { findUserByEmail, verifyPassword, createUser, updateUserProfileImage, mapUserToToken } from '../../../(application)/services/auth.service';
+import connect from '../../../../utils/db/connect.js';
+import User from '../../../(domain)/entities/user.model.js';
+import bcrypt from 'bcrypt';
 
 const handler = NextAuth({
     providers: [
@@ -9,7 +11,6 @@ const handler = NextAuth({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
-
         CredentialsProvider({
             name: "Credentials",
             credentials: {
@@ -17,25 +18,27 @@ const handler = NextAuth({
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                const user = await findUserByEmail(credentials.email);
+                await connect();
+                const user = await User.findOne({ email: credentials.email });
 
-                if (!user) {
-                    throw new Error('No user found with this email');
-                }
+                if (!user) throw new Error('No user found with this email');
 
-                const isValidPassword = await verifyPassword(credentials.password, user.password);
-                if (!isValidPassword) {
-                    throw new Error('Invalid email or password');
-                }
+                const isValidPassword = await bcrypt.compare(credentials.password, user.password);
+                if (!isValidPassword) throw new Error('Invalid email or password');
 
-                return mapUserToToken(user);
+                return {
+                    id: user._id,
+                    name: user.username,
+                    email: user.email,
+                    profileImage: user.profileImage || null,
+                };
             },
         }),
     ],
     secret: process.env.NEXTAUTH_SECRET,
     session: {
         strategy: 'jwt',
-        maxAge: 3 * 24 * 60 * 60, // 3 days
+        maxAge: 3 * 24 * 60 * 60,
     },
     pages: {
         signIn: '/auth/login',
@@ -43,35 +46,71 @@ const handler = NextAuth({
     callbacks: {
         async jwt({ token, user, account, profile }) {
             if (user) {
-                token = { ...token, ...mapUserToToken(user, profile?.picture) };
+                const dbUser = await User.findOne({ email: user.email });
+
+                if (dbUser) {
+                    token.id = dbUser._id;
+                    token.newEmail = dbUser.newEmail;
+                } else {
+                    const newUser = await User.create({
+                        email: user.email,
+                        name: user.name || user.username,
+                        role: user.role,
+                        profileImage: account.provider === 'google' ? profile.picture : user.profileImage,
+                        location: user.location || "Unknown",
+                    });
+                    token.id = newUser._id;
+                }
+
+                token.email = user.email;
+                token.name = user.name || user.username;
+                token.role = user.role;
+                token.location = user.location || "Unknown";
+
+                token.profileImage = account?.provider === 'google' ? profile.picture : user.profileImage;
             }
+
             return token;
         },
         async session({ session, token }) {
-            session.user = token;
+            session.user = {
+                id: token.id,
+                email: token.email,
+                role: token.role,
+                name: token.name,
+                profileImage: token.profileImage,
+                location: token.location,
+            };
             return session;
         },
         async signIn({ user, account, profile }) {
             try {
-                const existingUser = await findUserByEmail(user.email);
+                await connect();
+                const existingUser = await User.findOne({ email: user.email });
                 const profileImage = account.provider === 'google' ? profile.picture : "";
 
                 if (!existingUser) {
-                    const newUser = await createUser({
+                    const location = profile?.locale ? profile.locale : "Unknown";
+                    const name = profile?.name || "Default Name";
+
+                    const newUser = new User({
+                        username: user.name || `user_${account.providerAccountId}`,
+                        name,
+                        location,
                         email: user.email,
-                        name: profile?.name || "Default Name",
-                        location: profile?.locale || "Unknown",
-                        profileImage,
                         googleId: account.provider === 'google' ? account.providerAccountId : "",
+                        profileImage: profileImage || undefined,
                     });
-                    return !!newUser;
-                } else if (account.provider === 'google') {
-                    await updateUserProfileImage(existingUser, profile.picture);
+
+                    await newUser.save();
+                } else if (account.provider === 'google' && !existingUser.profileImage) {
+                    existingUser.profileImage = profile.picture;
+                    await existingUser.save();
                 }
 
                 return true;
             } catch (error) {
-                console.error('Error during sign-in:', error);
+                console.error('Error saving user:', error);
                 return false;
             }
         }

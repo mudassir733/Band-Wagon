@@ -10,6 +10,7 @@ import ProfileImg from "../../../../../public/images/Profile.svg"
 import Link from "next/link"
 import { useSession, getSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
+import { Button } from '@nextui-org/react'
 
 const Header = () => {
     const { data: session, status } = useSession();
@@ -21,7 +22,7 @@ const Header = () => {
     const [isRoleUpdating, setIsRoleUpdating] = useState(false);
 
     useEffect(() => {
-        console.log("Session data:", session?.user?.sub);
+        console.log("Session data:", session?.user);
 
     })
     const fetchProfile = async () => {
@@ -46,8 +47,6 @@ const Header = () => {
         }
     };
 
-
-
     useEffect(() => {
         if (status === 'authenticated') {
             fetchProfile();
@@ -56,7 +55,7 @@ const Header = () => {
 
     // Role switch function
     const handleRoleSwitch = async () => {
-        if (!session?.user?.sub) {
+        if (!session?.user?.id) {
             toast.error('User session not found. Please log in.');
             return;
         }
@@ -64,12 +63,13 @@ const Header = () => {
         const newRole = role === "user" ? "artist" : "user";
         setIsRoleUpdating(true);
 
+
         console.log("New Role:", newRole);
 
 
 
         try {
-            const res = await fetch(`/api/users/${session.user.sub}`, {
+            const res = await fetch(`/api/users/${session.user.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role: newRole })
@@ -79,7 +79,6 @@ const Header = () => {
                 const data = await res.json();
                 setRole(data.role);
                 toast.success(`Role updated to ${data.role}`);
-
                 // Re-fetch the session data after role change
                 await getSession();
 
@@ -222,13 +221,13 @@ const Header = () => {
                     )}
 
                     <div className={styles.roleSwitch}>
-                        <button
+                        <Button
+                            className="bg-primary text-white h-7 w-[110px]"
                             onClick={handleRoleSwitch}
-                            disabled={isRoleUpdating} // Disable button when updating
-                            className={styles.switchButton}
+                            disabled={isRoleUpdating}
                         >
                             Switch to {role === "user" ? "artist" : "user"}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 

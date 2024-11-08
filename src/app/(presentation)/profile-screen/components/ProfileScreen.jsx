@@ -20,9 +20,9 @@ const ProfileScreen = () => {
 
     useEffect(() => {
         const fetchProfileData = async () => {
-            if (session?.user?.sub) {
+            if (session?.user?.id) {
                 try {
-                    const response = await fetch(`/api/users/${session.user.sub}`);
+                    const response = await fetch(`/api/users/${session.user.id}`);
                     if (response.ok) {
                         const data = await response.json();
                         console.log("Data", data);
@@ -46,7 +46,7 @@ const ProfileScreen = () => {
         };
 
         fetchProfileData();
-    }, [session?.user?.sub]);
+    }, [session?.user?.id]);
 
     if (profileData.loading) {
         return <p>Loading profile...</p>;

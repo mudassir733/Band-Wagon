@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { NextUIProvider } from '@nextui-org/react';
 
 const AuthChecker = ({ children }) => {
   const { data: session, status } = useSession();
@@ -25,7 +26,11 @@ export default function RootLayout({ children }) {
     <SessionProvider>
       <html lang="en">
         <body className={`antialiased`}>
-          <AuthChecker>{children}</AuthChecker>
+          <AuthChecker>
+            <NextUIProvider>
+              {children}
+            </NextUIProvider>
+          </AuthChecker>
           <ToastContainer
             position="top-center"
             autoClose={2000}
