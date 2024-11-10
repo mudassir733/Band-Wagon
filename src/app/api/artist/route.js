@@ -1,5 +1,5 @@
 import ArtistsPage from "../../(domain)/entities/artist.model";
-import connect from "../../../utils/db/connect.js";
+import connect from "../../(infrastructure)/db/connect";
 
 
 // POST: Create Artist

@@ -6,54 +6,43 @@ import ellipse from '../../../../../public/images/Ellipse 190.svg'
 import bandwogan from '../../../../../public/images/BandWagon.svg'
 import search from "../../../../../public/images/search.svg"
 import backArro from "../../../../../public/arrow_back.svg"
-import ProfileImg from "../../../../../public/images/Profile.svg"
 import Link from "next/link"
 import { useSession, getSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import { Button } from '@nextui-org/react'
+import { useSelector, useDispatch } from "react-redux"
+import {
+    fetchProfileData,
+    updateUserRole,
+    setSearchTerm,
+    setIsExpanded,
+    clearRecentSearch,
+    resetSearch
+} from "../../../../config/store/slices/header"
 
 const Header = () => {
     const { data: session, status } = useSession();
-    const [profile, setProfile] = useState({
-        profileImage: '',
-        profile: ProfileImg
-    });
-    const [role, setRole] = useState(session?.user?.role || "user");
-    const [isRoleUpdating, setIsRoleUpdating] = useState(false);
+    const dispatch = useDispatch();
+
+
+    const {
+        profile,
+        profileImage,
+        role,
+        isRoleUpdating,
+        isExpanded,
+        searchTerm,
+        recentSearches
+    } = useSelector(state => state.profileHeader);
+
 
     useEffect(() => {
-        console.log("Session data:", session?.user);
-
-    })
-    const fetchProfile = async () => {
-        if (!session?.user?.id) return;
-        try {
-            const res = await fetch(`/api/users/${session.user.id}`);
-            console.log(res.ok);
-
-
-            if (res.ok) {
-                const data = await res.json();
-                setProfile({
-                    profileImage: data.profileImage || ''
-                });
-                setRole(data.role || 'user');
-            } else {
-                toast.error('Failed to load profile data');
-            }
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-            toast.error('An error occurred while fetching profile data');
+        if (status === 'authenticated' && session?.user?.id) {
+            dispatch(fetchProfileData(session.user.id));
         }
-    };
+    }, [status, session, dispatch]);
 
-    useEffect(() => {
-        if (status === 'authenticated') {
-            fetchProfile();
-        }
-    }, [status, session]);
 
-    // Role switch function
     const handleRoleSwitch = async () => {
         if (!session?.user?.id) {
             toast.error('User session not found. Please log in.');
@@ -61,86 +50,31 @@ const Header = () => {
         }
 
         const newRole = role === "user" ? "artist" : "user";
-        setIsRoleUpdating(true);
+        await dispatch(updateUserRole({
+            userId: session.user.id,
+            newRole
+        }));
 
 
-        console.log("New Role:", newRole);
-
-
-
-        try {
-            const res = await fetch(`/api/users/${session.user.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ role: newRole })
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                setRole(data.role);
-                toast.success(`Role updated to ${data.role}`);
-                // Re-fetch the session data after role change
-                await getSession();
-
-                // if (newRole === "artist") {
-                //     const showUpdateResponse = await fetch(`/api/shows`, {
-                //         method: 'PUT',
-                //         headers: { 'Content-Type': 'application/json' },
-                //         body: JSON.stringify({ userId: session.user.sub })
-                //     });
-                //     console.log("Show update response", showUpdateResponse);
-
-
-                //     if (showUpdateResponse.ok) {
-                //         toast.success("Verified status of your shows updated successfully.");
-                //     } else {
-                //         const showUpdateError = await showUpdateResponse.json();
-                //         toast.error(`Failed to update shows' verified status: ${showUpdateError.message}`);
-                //     }
-                // }
-            } else {
-                const errorData = await res.json();
-                toast.error(`Failed to update role: ${errorData.message}`);
-            }
-        } catch (error) {
-            console.error('Error updating role:', error.message);
-            toast.error('An error occurred while updating role');
-        } finally {
-            setIsRoleUpdating(false);
-        }
+        await getSession();
     };
 
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [recentSearches, setRecentSearches] = useState([
-        { name: 'Allen Ruppersberg', image: '/andy.svg' },
-        { name: 'Andy Warhol', image: '/andy.svg' },
-        { name: '555 55th St N, State Zip' },
-        { name: 'BandWagon, 555 55th St N, City St...' }
-    ]);
 
     const handleFocus = () => {
-        setIsExpanded(true);
+        dispatch(setIsExpanded(true));
     };
 
     const handleClose = () => {
-        setIsExpanded(false);
-        setSearchTerm('');
+        dispatch(resetSearch());
     };
 
     const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
+        dispatch(setSearchTerm(e.target.value));
     };
 
-    const clearRecentSearch = (index) => {
-        setRecentSearches(recentSearches.filter((_, i) => i !== index));
+    const handleClearRecentSearch = (index) => {
+        dispatch(clearRecentSearch(index));
     };
-
-
-    useEffect(() => {
-        console.log("Sessuon", session?.user?.role);
-
-    })
 
     return (
         <header className={styles.header}>
@@ -159,14 +93,13 @@ const Header = () => {
                     <div className={`${styles.searchBar} ${isExpanded ? styles.active : ''}`}>
                         {isExpanded && (
                             <span className={styles.backIcon} onClick={handleClose}>
-                                <Image src={backArro} />
+                                <Image src={backArro} alt="back arrow" />
                             </span>
                         )}
                         {!isExpanded && (
                             <span className={styles.searchIcon}>
-                                <Image src={search} />
+                                <Image src={search} alt="search icon" />
                             </span>
-
                         )}
 
                         <input
@@ -196,7 +129,7 @@ const Header = () => {
                                         )}
                                         <span>{search.name}</span>
                                     </div>
-                                    <button onClick={() => clearRecentSearch(index)} className={styles.clearButton}>
+                                    <button onClick={() => handleClearRecentSearch(index)} className={styles.clearButton}>
                                         &times;
                                     </button>
                                 </div>
@@ -207,12 +140,12 @@ const Header = () => {
             </nav>
             <div>
                 <div className={styles.role_container}>
-                    {!profile.profileImage && (
-                        <Image src={profile.profile} width={40} height={40} className={styles.profile} />
+                    {!profileImage && (
+                        <p>Loading...</p>
                     )}
-                    {profile.profileImage && (
+                    {profileImage && (
                         <Image
-                            src={profile.profileImage}
+                            src={profileImage}
                             alt="Profile picture"
                             width={40}
                             height={40}
@@ -226,12 +159,13 @@ const Header = () => {
                             onClick={handleRoleSwitch}
                             disabled={isRoleUpdating}
                         >
+                            {!role && (
+                                null
+                            )}
                             Switch to {role === "user" ? "artist" : "user"}
                         </Button>
                     </div>
                 </div>
-
-
             </div>
         </header>
     );

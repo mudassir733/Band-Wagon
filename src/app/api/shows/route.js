@@ -1,6 +1,6 @@
 import Show from "../../(domain)/entities/show.model";
 import User from "../../(domain)/entities/user.model"
-import connect from "../../../utils/db/connect.js";
+import connect from "../../(infrastructure)/db/connect";
 
 export const POST = async (req) => {
     try {

@@ -25,7 +25,7 @@ const Sidebar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [role, setRole] = useState(session?.user?.role || "user");
 
-    // Functions to handle modal open and close
+
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
@@ -132,6 +132,15 @@ const Sidebar = () => {
                                     <p className={pathname === "/setting" ? styles.active : ""}>Setting</p>
                                 </div>
                             </Link>
+
+                            {role === "artist" && (
+                                <Link href="/create-shows">
+                                    <div className={styles.subRow}>
+                                        <GiGuitarHead size={20} color={pathname !== "/create-shows" ? "#fff" : ""} />
+                                        <p className={pathname === "/create-shows" ? styles.active : ""}>Shows</p>
+                                    </div>
+                                </Link>
+                            )}
                             <div className={styles.subRow} onClick={openModal}>
                                 <Image src={move} />
                                 <p>Log out</p>

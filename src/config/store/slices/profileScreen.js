@@ -1,16 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from "axios"
+import { userService } from '../../../app/(application)/services/user.service';
+import { handleApiError } from "../../../utils/apiErrorHandling"
+
 
 export const fetchProfileData = createAsyncThunk(
     'profile/fetchProfileData',
     async (userId, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`/api/users/${userId}`);
-            console.log("Profile screen", response?.data);
-
-            return response?.data;
+            const { data } = await userService.getProfile(userId)
+            console.log("Profile screen", data);
+            return data
         } catch (error) {
-            return rejectWithValue(error.response?.data?.message || 'Failed to fetch profile data');
+            const errorMesage = handleApiError(error)
+            return rejectWithValue(errorMesage);
         }
     }
 );

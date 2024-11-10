@@ -1,7 +1,10 @@
 
-import connect from '../../../utils/db/connect.js';
+import connect from '../../(infrastructure)/db/connect.js';
 import User from '../../(domain)/entities/user.model';
 import bcrypt from 'bcrypt';
+
+
+
 
 
 

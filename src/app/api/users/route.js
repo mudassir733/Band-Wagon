@@ -1,6 +1,6 @@
 import User from "../../(domain)/entities/user.model";
 import Show from "../../(domain)/entities/show.model.js";
-import connect from "../../../utils/db/connect.js";
+import connect from "../../(infrastructure)/db/connect.js";
 import mongoose from "mongoose";
 
 export const GET = async (req) => {

@@ -1,5 +1,5 @@
 import User from "../../(domain)/entities/user.model.js";
-import connect from "../../../utils/db/connect.js";
+import connect from "../../(infrastructure)/db/connect.js";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 import { signIn } from "next-auth/react"
