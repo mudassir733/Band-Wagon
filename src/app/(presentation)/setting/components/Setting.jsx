@@ -124,6 +124,7 @@ const Setting = () => {
 
 
 
+
     const [switchStates, setSwitchStates] = useState({
         radius: false,
         playingNearYou1: false,

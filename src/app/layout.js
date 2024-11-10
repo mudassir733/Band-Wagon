@@ -6,6 +6,8 @@ import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { NextUIProvider } from '@nextui-org/react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from '../config/store/store';
 
 const AuthChecker = ({ children }) => {
   const { data: session, status } = useSession();
@@ -27,9 +29,11 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={`antialiased`}>
           <AuthChecker>
-            <NextUIProvider>
-              {children}
-            </NextUIProvider>
+            <ReduxProvider store={store}>
+              <NextUIProvider>
+                {children}
+              </NextUIProvider>
+            </ReduxProvider>
           </AuthChecker>
           <ToastContainer
             position="top-center"

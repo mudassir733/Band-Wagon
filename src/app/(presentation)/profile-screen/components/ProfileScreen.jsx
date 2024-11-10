@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styles from "./profileScreen.module.css";
 import Sidebar from "../../shared/sidebar/Sidebar";
 import ProfileImage from "../../../../../public/profile-screen.svg";
@@ -6,50 +6,29 @@ import Image from 'next/image';
 import rightChev from "../../../../../public/chevron_right.svg";
 import Link from "next/link";
 import { useSession } from 'next-auth/react';
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProfileData } from '../../../../config/store/slices/profileScreen';
 
 const ProfileScreen = () => {
     const { data: session } = useSession();
-    const [profileData, setProfileData] = useState({
-        profileImage: '',
-        name: '',
-        username: '',
-        role: '',
-        loading: true
-    });
+    const dispatch = useDispatch();
 
+    let { profileImage, name, username, role, loading, error } = useSelector(
+        (state) => state.profile
+    );
 
     useEffect(() => {
-        const fetchProfileData = async () => {
-            if (session?.user?.id) {
-                try {
-                    const response = await fetch(`/api/users/${session.user.id}`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log("Data", data);
+        if (session?.user?.id) {
+            dispatch(fetchProfileData(session.user.id));
+        }
+    }, [session?.user?.id, dispatch]);
 
-                        setProfileData({
-                            profileImage: data.profileImage || '',
-                            name: data.name || '',
-                            username: data.username || '',
-                            role: data.role || '',
-                            loading: false
-                        });
-                    } else {
-                        setProfileData((prev) => ({ ...prev, loading: false }));
-                        console.error("Failed to fetch profile data");
-                    }
-                } catch (error) {
-                    console.error("Error fetching profile data:", error);
-                    setProfileData((prev) => ({ ...prev, loading: false }));
-                }
-            }
-        };
-
-        fetchProfileData();
-    }, [session?.user?.id]);
-
-    if (profileData.loading) {
+    if (loading) {
         return <p>Loading profile...</p>;
+    }
+
+    if (error) {
+        return <p>Error loading profile: {error}</p>;
     }
 
     return (
@@ -60,7 +39,7 @@ const ProfileScreen = () => {
                     <div className={styles.profileCard}>
                         <div className={styles.person}>
                             <Image
-                                src={profileData.profileImage ? profileData.profileImage : ProfileImage}
+                                src={profileImage}
                                 width={120}
                                 height={120}
                                 alt="Profile Image"
@@ -69,8 +48,8 @@ const ProfileScreen = () => {
                         </div>
                         <div className={styles.personInfo}>
                             <div>
-                                <h3>{profileData.name}</h3>
-                                <p>{profileData.username}</p> {/* Displaying the username */}
+                                <h3>{name}</h3>
+                                <p>{username}</p>
                             </div>
                         </div>
                         <Link href="/edit-profile">
@@ -80,8 +59,7 @@ const ProfileScreen = () => {
                         </Link>
                     </div>
 
-                    {/* Checking the role from profileData instead of session */}
-                    {profileData.role === "artist" && (
+                    {role === "artist" && (
                         <>
                             <div className={styles.cardShow_container}>
                                 <Link href="/artist-page-management">
