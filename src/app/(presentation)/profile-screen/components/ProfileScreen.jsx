@@ -7,7 +7,7 @@ import rightChev from "../../../../../public/chevron_right.svg";
 import Link from "next/link";
 import { useSession } from 'next-auth/react';
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProfileData } from '../../../../config/store/slices/profileScreen';
+import { fetchProfileData } from '../../../../config/store/features/ProfileSlice/profileScreen';
 
 const ProfileScreen = () => {
     const { data: session } = useSession();

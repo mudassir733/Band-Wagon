@@ -9,6 +9,7 @@ import { NextUIProvider } from '@nextui-org/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { store } from '../config/store/store';
 
+
 const AuthChecker = ({ children }) => {
   const { data: session, status } = useSession();
   const router = useRouter();

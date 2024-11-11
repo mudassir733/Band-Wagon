@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit"
-import profileScreen from "./slices/profileScreen"
-import headerReducer from "./slices/header"
+import profileScreen from "./features/ProfileSlice/profileScreen"
+// import headerReducer from "./features/HeaderSlice/header"
 
 
 export const store = configureStore({
     reducer: {
         profile: profileScreen,
-        profileHeader: headerReducer,
+        // profileHeader: headerReducer,
     }
 })
 

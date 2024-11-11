@@ -18,63 +18,67 @@ import {
     setIsExpanded,
     clearRecentSearch,
     resetSearch
-} from "../../../../config/store/slices/header"
+} from "../../../../config/store/features/ProfileSlice/profileScreen"
 
-const Header = () => {
-    const { data: session, status } = useSession();
-    const dispatch = useDispatch();
+const Header = ({ onRoleChange, role, profileImage, isRoleUpdating, isExpanded, searchTerm, recentSearches, handleClose, handleFocus, handleSearch, handleClearRecentSearch }) => {
+    // const { data: session, status } = useSession();
+    // const dispatch = useDispatch();
 
 
-    const {
-        profile,
-        profileImage,
-        role,
-        isRoleUpdating,
-        isExpanded,
-        searchTerm,
-        recentSearches
-    } = useSelector(state => state.profileHeader);
+    // const {
+    //     profile,
+    //     isRoleUpdating,
+    //     isExpanded,
+    //     searchTerm,
+    //     recentSearches
+    // } = useSelector(state => state.profile);
 
+
+    // useEffect(() => {
+    //     if (status === 'authenticated' && session?.user?.id) {
+    //         dispatch(fetchProfileData(session.user.id));
+    //     }
+    // }, [status, session, dispatch]);
+
+
+    // const handleRoleSwitch = async () => {
+    //     if (!session?.user?.id) {
+    //         toast.error('User session not found. Please log in.');
+    //         return;
+    //     }
+
+    //     const newRole = role === "user" ? "artist" : "user";
+
+    //     await dispatch(updateUserRole({
+    //         userId: session.user.id,
+    //         newRole
+    //     }));
+
+
+    //     await getSession();
+    // };
+
+
+    // const handleFocus = () => {
+    //     dispatch(setIsExpanded(true));
+    // };
+
+    // const handleClose = () => {
+    //     dispatch(resetSearch());
+    // };
+
+    // const handleSearch = (e) => {
+    //     dispatch(setSearchTerm(e.target.value));
+    // };
+
+    // const handleClearRecentSearch = (index) => {
+    //     dispatch(clearRecentSearch(index));
+    // };
 
     useEffect(() => {
-        if (status === 'authenticated' && session?.user?.id) {
-            dispatch(fetchProfileData(session.user.id));
-        }
-    }, [status, session, dispatch]);
+        console.log("Profile Data: ", profileImage);
 
-
-    const handleRoleSwitch = async () => {
-        if (!session?.user?.id) {
-            toast.error('User session not found. Please log in.');
-            return;
-        }
-
-        const newRole = role === "user" ? "artist" : "user";
-        await dispatch(updateUserRole({
-            userId: session.user.id,
-            newRole
-        }));
-
-
-        await getSession();
-    };
-
-
-    const handleFocus = () => {
-        dispatch(setIsExpanded(true));
-    };
-
-    const handleClose = () => {
-        dispatch(resetSearch());
-    };
-
-    const handleSearch = (e) => {
-        dispatch(setSearchTerm(e.target.value));
-    };
-
-    const handleClearRecentSearch = (index) => {
-        dispatch(clearRecentSearch(index));
-    };
+    })
 
     return (
         <header className={styles.header}>
@@ -156,7 +160,7 @@ const Header = () => {
                     <div className={styles.roleSwitch}>
                         <Button
                             className="bg-primary text-white h-7 w-[110px]"
-                            onClick={handleRoleSwitch}
+                            onClick={onRoleChange}
                             disabled={isRoleUpdating}
                         >
                             {!role && (
