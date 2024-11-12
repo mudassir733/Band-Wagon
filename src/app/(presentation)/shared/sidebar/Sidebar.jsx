@@ -12,18 +12,17 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { IoSettingsSharp } from "react-icons/io5";
 import LogoutModel from '../logout-model/LogoutModel';
 import { GiGuitarHead } from "react-icons/gi";
-import { useSession } from 'next-auth/react';
 
 
 
 
-const Sidebar = () => {
-    const { data: session } = useSession()
+const Sidebar = ({ role }) => {
+
     const pathname = usePathname()
 
     const [open, setOpen] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [role, setRole] = useState(session?.user?.role || "user");
+
 
 
     const openModal = () => setIsModalOpen(true);
@@ -33,25 +32,7 @@ const Sidebar = () => {
         setOpen(prev => !prev);
     }
 
-    useEffect(() => {
-        if (!session?.user?.id) return;
 
-        const fetchUsers = async () => {
-            try {
-                const res = await fetch(`/api/users/${session.user.id}`)
-                if (res.ok) {
-                    const data = await res.json();
-                    setRole(data.role || "user");
-
-                }
-            } catch (error) {
-                console.error("An error occurred while fetching users", error.message);
-            }
-        }
-
-
-        fetchUsers();
-    }, [session?.user?.id])
 
     return (
 

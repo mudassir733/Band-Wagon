@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect } from 'react'
 import Header from "../header/Header"
 import Sidebar from "../sidebar/Sidebar"
@@ -11,9 +12,8 @@ import {
     clearRecentSearch,
     resetSearch
 } from "../../../../config/store/features/ProfileSlice/profileScreen"
-import MapComponent from "../google-map/GoogleMaps"
 
-const ParentLayout = () => {
+const ParentLayout = ({ children }) => {
 
     const { data: session, status } = useSession();
     const dispatch = useDispatch();
@@ -75,7 +75,8 @@ const ParentLayout = () => {
     return (
         <div>
             <Header onRoleChange={handleRoleSwitch} role={role} profileImage={profileImage} isRoleUpdating={isRoleUpdating} isExpanded={isExpanded} searchTerm={searchTerm} recentSearches={recentSearches} handleClose={handleClose} handleFocus={handleFocus} handleSearch={handleSearch} handleClearRecentSearch={handleClearRecentSearch} />
-            <Sidebar />
+            {children}
+            <Sidebar role={role} />
         </div>
     )
 }
