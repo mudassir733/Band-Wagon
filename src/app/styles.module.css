@@ -1,5 +1,6 @@
 .main_section {
     position: relative;
+    height: fit-content;
 }
 
 .map {

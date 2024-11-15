@@ -1,38 +1,27 @@
-import connect from '../../../../utils/db/connect.js';
-import User from '../../../../models/user.model.js';
+import connect from '../../../(infrastructure)/db/connect.js';
+import User from '../../../(domain)/entities/user.model.js';
 import bcrypt from "bcrypt"
 import { ObjectId } from 'mongodb';
+import { getUser } from "../../../(application)/use-case/createUser.js"
+
+
+
 
 export async function GET(req, { params }) {
     const { id } = params;
 
+    if (!id || !ObjectId.isValid(id)) {
+        return new Response(JSON.stringify({ message: "Invalid user ID" }), { status: 400 });
+    }
     try {
-        await connect();
+        const { user, success, message } = await getUser(id)
 
-        let user;
-        if (ObjectId.isValid(id)) {
-            user = await User.findById(id);
+        if (!success) {
+            return new Response(JSON.stringify({ message }), { status: 404 });
+
         }
 
-
-        if (!user) {
-            return new Response(JSON.stringify({ message: 'User not found' }), {
-                status: 404,
-            });
-        }
-
-        return new Response(
-            JSON.stringify({
-                id: user._id,
-                name: user.name,
-                username: user.username,
-                email: user.email,
-                location: user.location,
-                role: user.role,
-                profileImage: user.profileImage,
-            }),
-            { status: 200 }
-        );
+        return new Response(JSON.stringify({ user }), { status: 200 })
     } catch (error) {
         console.error('Error fetching user:', error.message);
         return new Response(JSON.stringify({ message: 'Internal server error' }), {
@@ -40,8 +29,6 @@ export async function GET(req, { params }) {
         });
     }
 }
-
-
 
 
 

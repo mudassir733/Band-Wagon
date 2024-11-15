@@ -1,6 +1,6 @@
-import Show from "../../../models/shows.model.js";
-import User from "../../../models/user.model.js"
-import connect from "../../../utils/db/connect.js";
+import Show from "../../(domain)/entities/show.model";
+import User from "../../(domain)/entities/user.model"
+import connect from "../../(infrastructure)/db/connect";
 
 export const POST = async (req) => {
     try {
