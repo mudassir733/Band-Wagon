@@ -12,10 +12,13 @@ import {
     clearRecentSearch,
     resetSearch
 } from "../../../../config/store/features/ProfileSlice/profileScreen"
+import { usePathname } from 'next/navigation'
 
 const ParentLayout = ({ children }) => {
 
+
     const { data: session, status } = useSession();
+    const path = usePathname()
     const dispatch = useDispatch();
 
 
@@ -76,7 +79,8 @@ const ParentLayout = ({ children }) => {
         <div>
             <Header onRoleChange={handleRoleSwitch} role={role} profileImage={profileImage} isRoleUpdating={isRoleUpdating} isExpanded={isExpanded} searchTerm={searchTerm} recentSearches={recentSearches} handleClose={handleClose} handleFocus={handleFocus} handleSearch={handleSearch} handleClearRecentSearch={handleClearRecentSearch} />
             {children}
-            <Sidebar role={role} />
+            {path === "/artist-profile" ? null : <Sidebar role={role} />}
+
         </div>
     )
 }

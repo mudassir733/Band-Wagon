@@ -8,7 +8,6 @@ import { useEffect } from "react";
 import { NextUIProvider } from '@nextui-org/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { store } from '../config/store/store';
-import ParentLayout from "./(presentation)/shared/Layout/ParentLayout"
 
 
 const AuthChecker = ({ children }) => {
@@ -33,10 +32,8 @@ export default function RootLayout({ children }) {
           <AuthChecker>
             <ReduxProvider store={store}>
               <NextUIProvider>
-                <ParentLayout>
 
-                  {children}
-                </ParentLayout>
+                {children}
               </NextUIProvider>
             </ReduxProvider>
           </AuthChecker>

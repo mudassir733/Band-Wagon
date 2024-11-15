@@ -15,11 +15,13 @@ export const userService = {
     updateRole: (userId, role) => apiClient.put(`/users/${userId}`, { role })
 };
 
+
+
 apiClient.interceptors.request.use(
     async (config) => {
 
         const session = await getSession();
-        const token = session?.user?.id;
+        const token = process.env.TOKEN_SECRET;
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;

@@ -1,6 +1,5 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import Header from "./(presentation)/shared/header/Header"
 import instant from "../../public/images/instant_mix.png"
 import genres from "../../public/images/genres.png"
 import schedule from "../../public/images/schedule.svg"
@@ -10,11 +9,11 @@ import tick from "../../public/images/Tick.svg"
 import unTick from "../../public/images/unTick.svg"
 import Image from 'next/image'
 import styles from './styles.module.css'
-import Sidebar from "./(presentation)/shared/sidebar/Sidebar"
 import MapComponent from "./(presentation)/shared/google-map/GoogleMaps"
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { LuSend } from "react-icons/lu";
+import ParentLayout from "./(presentation)/shared/Layout/ParentLayout"
 
 
 
@@ -153,66 +152,68 @@ export default function Home() {
 
   return (
     <>
-      <div className={styles.main_section}>
-        <div className={styles.map}>
-          <MapComponent shows={filterShows} allShows={allShows} />
-          <div className={styles.flex_nav}>
-            <nav className={styles.navbar}>
-              <div className={styles.flex}>
-                <div className={styles.box}>
-                  <button className={styles.iconButton}>
-                    <Image src={instant} alt="instant" />
-                  </button>
-                </div>
-                <div className={openDropdownIndex === 0 ? `${styles.box} ${styles.active}` : `${styles.box}`} onClick={() => handleDropdownToggle(0)}>
-                  <div>
-                    <Image src={genres} alt="genres" />
+      <ParentLayout>
+        <div className={styles.main_section}>
+          <div className={styles.map}>
+            <MapComponent shows={filterShows} allShows={allShows} />
+            <div className={styles.flex_nav}>
+              <nav className={styles.navbar}>
+                <div className={styles.flex}>
+                  <div className={styles.box}>
+                    <button className={styles.iconButton}>
+                      <Image src={instant} alt="instant" />
+                    </button>
                   </div>
-                  <Dropdown
-                    label="Genre"
-                    options={[
-                      "Classical", "Blues", "EDM", "Country", "Funk", "Folk", "Jazz", "Hip-Hop", "Metal", "Latin", "Punk", "Pop", "Rock", "Reggae", "Soul", "R&B"
-                    ]}
-                    selected={selectedGenres}
-                    onSelect={handleGenreSelect}
-                    isOpen={openDropdownIndex === 0}
-                    onToggle={() => handleDropdownToggle(0)}
-                  />
-                </div>
-
-                <div className={openDropdownIndex === 1 ? `${styles.box} ${styles.active}` : `${styles.box}`} onClick={() => handleDropdownToggle(1)}>
-                  <div>
-                    <Image src={schedule} alt="schedule" />
+                  <div className={openDropdownIndex === 0 ? `${styles.box} ${styles.active}` : `${styles.box}`} onClick={() => handleDropdownToggle(0)}>
+                    <div>
+                      <Image src={genres} alt="genres" />
+                    </div>
+                    <Dropdown
+                      label="Genre"
+                      options={[
+                        "Classical", "Blues", "EDM", "Country", "Funk", "Folk", "Jazz", "Hip-Hop", "Metal", "Latin", "Punk", "Pop", "Rock", "Reggae", "Soul", "R&B"
+                      ]}
+                      selected={selectedGenres}
+                      onSelect={handleGenreSelect}
+                      isOpen={openDropdownIndex === 0}
+                      onToggle={() => handleDropdownToggle(0)}
+                    />
                   </div>
-                  <DropdownTime
-                    label="Time"
-                    selectedTime={selectedTimeFilter}
-                    onTimeSelect={handleTimeFilterSelect}
-                    isOpen={openDropdownIndex === 1}
-                    onToggle={() => handleDropdownToggle(1)}
-                  />
-                </div>
 
-                <div className={styles.box}>
-                  <div>
-                    <Image src={fav} alt="favorite" />
+                  <div className={openDropdownIndex === 1 ? `${styles.box} ${styles.active}` : `${styles.box}`} onClick={() => handleDropdownToggle(1)}>
+                    <div>
+                      <Image src={schedule} alt="schedule" />
+                    </div>
+                    <DropdownTime
+                      label="Time"
+                      selectedTime={selectedTimeFilter}
+                      onTimeSelect={handleTimeFilterSelect}
+                      isOpen={openDropdownIndex === 1}
+                      onToggle={() => handleDropdownToggle(1)}
+                    />
                   </div>
-                  <button className={styles.iconButton}>
-                    Saved
-                  </button>
+
+                  <div className={styles.box}>
+                    <div>
+                      <Image src={fav} alt="favorite" />
+                    </div>
+                    <button className={styles.iconButton}>
+                      Saved
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-            </nav>
-            {isFilterSelected ? (
-              <button className={styles.applyButton} onClick={fetchFilteredShows}>
-                <LuSend />
-              </button>
-            ) : null}
-          </div>
+              </nav>
+              {isFilterSelected ? (
+                <button className={styles.applyButton} onClick={fetchFilteredShows}>
+                  <LuSend />
+                </button>
+              ) : null}
+            </div>
 
+          </div >
         </div >
-      </div >
+      </ParentLayout >
     </>
   );
 }

@@ -34,7 +34,6 @@ const ProfileScreen = () => {
     return (
         <>
             <div className={styles.container}>
-                <Sidebar />
                 <div className={styles.mid_section}>
                     <div className={styles.profileCard}>
                         <div className={styles.person}>

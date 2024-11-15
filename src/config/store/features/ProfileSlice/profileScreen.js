@@ -9,8 +9,8 @@ export const fetchProfileData = createAsyncThunk(
     async (userId, { rejectWithValue }) => {
         try {
             const { data } = await userService.getProfile(userId)
-            console.log("Profile screen", data);
-            return data
+            console.log("Profile screen", data.user);
+            return data.user
         } catch (error) {
             const errorMesage = handleApiError(error)
             return rejectWithValue(errorMesage);

@@ -45,7 +45,7 @@ const Sidebar = ({ role }) => {
 
                             <Link href="/">
                                 <div className={pathname === "/" ? styles.active_bg : ""}>
-                                    <IoLocationOutline size={20} />
+                                    <IoLocationOutline size={20} color={pathname !== "/" ? "#fff" : ""} />
                                 </div>
                             </Link>
 
