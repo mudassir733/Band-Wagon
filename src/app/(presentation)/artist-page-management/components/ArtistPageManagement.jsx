@@ -35,7 +35,7 @@ const ArtistPageManagement = () => {
                 <div className={styles.create_artist_page}>
                     <div className={styles.artist_page_box}>
                         <div className={styles.image}>
-                            <Image src={location} />
+                            <Image src={location} alt='location icon' />
                         </div>
 
                         <div className={styles.content}>

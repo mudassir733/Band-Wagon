@@ -31,7 +31,7 @@ const ArtistProfile = () => {
                     <div className={styles.artist_profile}>
                         <div className={styles.row}>
                             <div className={styles.left_col}>
-                                <Image src={profile} width={130} height={130} />
+                                <Image src={profile} width={130} height={130} alt='profile image' />
                             </div>
                             <div className={styles.right_col}>
                                 <div className={styles.frame}>
@@ -51,14 +51,14 @@ const ArtistProfile = () => {
                                     </div>
                                     <div className={styles.artist_name}>
                                         <p>Andy Warhool</p>
-                                        <Image src={verified} />
+                                        <Image src={verified} alt='check icon' />
                                     </div>
                                     <div className={styles.icon_box}>
-                                        <Image src={location} />
+                                        <Image src={location} alt='location icon' />
                                         <p>New York City</p>
                                     </div>
                                     <div className={styles.icon_box}>
-                                        <Image src={genre} />
+                                        <Image src={genre} alt='genres' />
                                         <p>Pop, Rock, Blues</p>
                                     </div>
                                     <div className={styles.desc}>
@@ -73,19 +73,19 @@ const ArtistProfile = () => {
                                     <div className={styles.show_info}>
                                         <div className={styles.grid}>
                                             <div className={styles.info}>
-                                                <Image src={calendar} width={24} height={24} />
+                                                <Image src={calendar} width={24} height={24} alt='calender' />
                                                 <p>29, Oct</p>
                                             </div>
                                             <div className={styles.info}>
-                                                <Image src={location} width={24} height={24} />
+                                                <Image src={location} width={24} height={24} alt='location' />
                                                 <p>29, Oct</p>
                                             </div>
                                             <div className={styles.info}>
-                                                <Image src={time} width={24} height={24} />
+                                                <Image src={time} width={24} height={24} alt='time' />
                                                 <p>29, Oct</p>
                                             </div>
                                             <div className={styles.info}>
-                                                <Image src={monitize} width={24} height={24} />
+                                                <Image src={monitize} width={24} height={24} alt='monitize' />
                                                 <p>29, Oct</p>
                                             </div>
                                         </div>
@@ -104,16 +104,16 @@ const ArtistProfile = () => {
                                     </div>
                                     <div className={styles.social_icon}>
                                         <div className={styles.social_bg}>
-                                            <Image src={icon1} width={21} height={21} />
+                                            <Image src={icon1} width={21} height={21} alt='icons' />
                                         </div>
                                         <div className={styles.social_bg}>
-                                            <Image src={icon2} width={21} height={21} />
+                                            <Image src={icon2} width={21} height={21} alt='icons' />
                                         </div>
                                         <div className={styles.social_bg}>
-                                            <Image src={icon3} width={21} height={21} />
+                                            <Image src={icon3} width={21} height={21} alt='icons' />
                                         </div>
                                         <div className={styles.social_bg}>
-                                            <Image src={icon4} width={21} height={21} />
+                                            <Image src={icon4} width={21} height={21} alt='icons' />
                                         </div>
 
 
@@ -127,10 +127,10 @@ const ArtistProfile = () => {
 
                                     <div className={styles.payment_icon}>
                                         <div className={styles.social_bg}>
-                                            <Image src={doller} width={21} height={21} />
+                                            <Image src={doller} width={21} height={21} alt='doller' />
                                         </div>
                                         <div className={styles.social_bg}>
-                                            <Image src={vector} width={21} height={21} />
+                                            <Image src={vector} width={21} height={21} alt='vector' />
                                         </div>
                                     </div>
                                 </div>

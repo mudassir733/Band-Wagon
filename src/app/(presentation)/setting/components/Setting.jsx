@@ -357,7 +357,7 @@ const Setting = () => {
 
                                     </div>Change email </li>
                                     <div>
-                                        <Image src={rightChev} className={styles.rightChev} /></div>
+                                        <Image src={rightChev} className={styles.rightChev} alt='right arrow icon' /></div>
 
                                 </div>
                                 <div className={styles.listIcon} onClick={() => setActiveSection('changePassword')}>
@@ -368,7 +368,7 @@ const Setting = () => {
                                             <FaRegUser size={24} />
                                         </div>Change password</li>
                                     <div>
-                                        <Image src={rightChev} className={styles.rightChev} /></div>
+                                        <Image src={rightChev} className={styles.rightChev} alt='right arrow icon' /></div>
                                 </div>
                                 <div className={styles.listIcon} onClick={() => setActiveSection('deleteAccount')}>
 
@@ -379,7 +379,7 @@ const Setting = () => {
 
                                     </div>Delete account</li>
                                     <div>
-                                        <Image src={rightChev} className={styles.rightChev} /></div>
+                                        <Image src={rightChev} className={styles.rightChev} alt='right arrow icon' /></div>
                                 </div>
                             </ul>
                         </div>
@@ -394,7 +394,7 @@ const Setting = () => {
                                     </div>Privacy policy</li>
 
                                     <div>
-                                        <Image src={rightChev} className={styles.rightChev} /></div>
+                                        <Image src={rightChev} className={styles.rightChev} alt='right arrow icon' /></div>
                                 </div>
 
                                 <div className={styles.listIcon} onClick={() => setActiveSection('termsConditions')}>
@@ -404,7 +404,7 @@ const Setting = () => {
                                     </div>Terms & conditions</li>
 
                                     <div>
-                                        <Image src={rightChev} className={styles.rightChev} /></div>
+                                        <Image src={rightChev} className={styles.rightChev} alt='right arrow icon' /></div>
                                 </div>
 
                             </ul>
@@ -420,7 +420,7 @@ const Setting = () => {
                                     </div>Notifications</li>
 
                                     <div>
-                                        <Image src={rightChev} className={styles.rightChev} /></div>
+                                        <Image src={rightChev} className={styles.rightChev} alt='right arrow icon' /></div>
                                 </div>
 
                                 <div className={styles.listIcon} onClick={() => setActiveSection('themes')}>
@@ -430,7 +430,7 @@ const Setting = () => {
                                     </div>Themes</li>
 
                                     <div>
-                                        <Image src={rightChev} className={styles.rightChev} /></div>
+                                        <Image src={rightChev} className={styles.rightChev} alt='right arrow icon' /></div>
                                 </div>
 
                             </ul>

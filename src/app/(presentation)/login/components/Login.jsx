@@ -103,7 +103,7 @@ const Login = () => {
                         <h1 className={styles.title}>Sign In to BandWagon</h1>
                         <form className={styles.form} onSubmit={formik.handleSubmit}>
                             <div className={styles.inputField}>
-                                <Image src={mail} alt='Mail' />
+                                <Image src={mail} alt='Mail icon' />
                                 <input
                                     type="email"
                                     placeholder="Email"

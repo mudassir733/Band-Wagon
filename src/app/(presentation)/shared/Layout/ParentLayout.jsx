@@ -1,7 +1,6 @@
 "use client"
 import React, { useEffect } from 'react'
 import Header from "../header/Header"
-import Sidebar from "../sidebar/Sidebar"
 import { useSelector, useDispatch } from "react-redux"
 import { useSession } from 'next-auth/react'
 import {
@@ -13,6 +12,9 @@ import {
     resetSearch
 } from "../../../../config/store/features/ProfileSlice/profileScreen"
 import { usePathname } from 'next/navigation'
+import dynamic from 'next/dynamic';
+
+const Sidebar = dynamic(() => import('../sidebar/Sidebar'), { ssr: false });
 
 const ParentLayout = ({ children }) => {
 
@@ -54,7 +56,6 @@ const ParentLayout = ({ children }) => {
         }));
 
 
-        await getSession();
     };
 
 

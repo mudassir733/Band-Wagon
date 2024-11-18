@@ -1,27 +1,56 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "./profileScreen.module.css";
-import Sidebar from "../../shared/sidebar/Sidebar";
 import ProfileImage from "../../../../../public/profile-screen.svg";
 import Image from 'next/image';
 import rightChev from "../../../../../public/chevron_right.svg";
 import Link from "next/link";
 import { useSession } from 'next-auth/react';
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { fetchProfileData } from '../../../../config/store/features/ProfileSlice/profileScreen';
 
 const ProfileScreen = () => {
     const { data: session } = useSession();
     const dispatch = useDispatch();
+    const [isFetched, setIsFetched] = useState(false);
 
-    let { profileImage, name, username, role, loading, error } = useSelector(
-        (state) => state.profile
+    const { profileImage, name, username, role, loading, error } = useSelector(
+        (state) => ({
+            profileImage: state.profile.profileImage || ProfileImage,
+            name: state.profile.name || 'Unknown User',
+            username: state.profile.username || 'unknown_username',
+            role: state.profile.role,
+            loading: state.profile.loading,
+            error: state.profile.error,
+        }),
+        shallowEqual
     );
 
     useEffect(() => {
-        if (session?.user?.id) {
-            dispatch(fetchProfileData(session.user.id));
-        }
-    }, [session?.user?.id, dispatch]);
+        const fetchProfile = async () => {
+            const cachedUserId = localStorage.getItem("cachedUserId");
+
+            if (session?.user?.id && session.user.id !== cachedUserId && !isFetched) {
+                await dispatch(fetchProfileData(session.user.id));
+                localStorage.setItem("cachedUserId", session.user.id);
+                setIsFetched(true);
+            }
+        };
+
+        fetchProfile();
+
+
+        const handleVisibilityChange = () => {
+            if (!document.hidden && session?.user?.id && !isFetched) {
+                fetchProfile();
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
+    }, [session?.user?.id, dispatch, isFetched]);
 
     if (loading) {
         return <p>Loading profile...</p>;
@@ -60,31 +89,16 @@ const ProfileScreen = () => {
 
                     {role === "artist" && (
                         <>
-                            <div className={styles.cardShow_container}>
-                                <Link href="/artist-page-management">
-                                    <div className={styles.cardNextShow}>
-                                        <div className={styles.left}>
-                                            <p>Artist page management</p>
-                                        </div>
-                                        <div className={styles.right}>
-                                            <Image src={rightChev} alt="Chevron" />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-
-                            <div className={styles.cardShow_container}>
-                                <Link href="/saved-artists">
-                                    <div className={styles.cardNextShow}>
-                                        <div className={styles.left}>
-                                            <p>View saved & hidden artists</p>
-                                        </div>
-                                        <div className={styles.right}>
-                                            <Image src={rightChev} alt="Chevron" />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
+                            <ProfileLink
+                                href="/artist-page-management"
+                                text="Artist Page Management"
+                                icon={rightChev}
+                            />
+                            <ProfileLink
+                                href="/saved-artists"
+                                text="View Saved & Hidden Artists"
+                                icon={rightChev}
+                            />
                         </>
                     )}
                 </div>
@@ -93,4 +107,19 @@ const ProfileScreen = () => {
     );
 };
 
+
+const ProfileLink = ({ href, text, icon }) => (
+    <div className={styles.cardShow_container}>
+        <Link href={href}>
+            <div className={styles.cardNextShow}>
+                <div className={styles.left}>
+                    <p>{text}</p>
+                </div>
+                <div className={styles.right}>
+                    <Image src={icon} alt="Chevron" width={20} height={20} />
+                </div>
+            </div>
+        </Link>
+    </div>
+);
 export default ProfileScreen;

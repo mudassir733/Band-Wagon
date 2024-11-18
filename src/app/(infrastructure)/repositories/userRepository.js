@@ -36,5 +36,16 @@ export const userRepository = {
         }
     },
 
+    // update user
+    async updateUserById(userId, updatedUserData) {
+        try {
+            await connect()
+            const user = await User.findByIdAndUpdate(userId, updatedUserData, { new: true })
+            return user
+        } catch (error) {
+            throw new Error(`Error updating user by id: ${error.message}`)
+        }
+    },
+
 
 } 

@@ -2,7 +2,7 @@ import connect from '../../../(infrastructure)/db/connect.js';
 import User from '../../../(domain)/entities/user.model.js';
 import bcrypt from "bcrypt"
 import { ObjectId } from 'mongodb';
-import { getUser } from "../../../(application)/use-case/createUser.js"
+import { getUser, updateUser } from "../../../(application)/use-case/createUser.js"
 
 
 
@@ -38,56 +38,46 @@ export async function PUT(req, { params }) {
 
     try {
         const { name, username, location, profileImage, role, confirmPassword, password, email } = await req.json();
-        console.log(name, username, location, profileImage, role, confirmPassword)
+        console.log("user data from request json", name, username, location, profileImage, role, confirmPassword)
 
-        await connect();
-
-        let user;
-        if (ObjectId.isValid(id)) {
-            user = await User.findById(id);
-        }
-
-        if (!user) {
-            return new Response(JSON.stringify({ message: 'User not found' }), {
-                status: 404,
+        if (!id || !ObjectId.isValid(id)) {
+            return new Response(JSON.stringify({ message: 'Invalid user ID' }), {
+                status: 400,
             });
         }
 
-        user.name = name || user.name;
-        user.username = username || user.username;
-        user.location = location || user.location;
-        user.email = email || user.email;
-        user.profileImage = profileImage || user.profileImage;
-        user.role = role || user.role;
-
-        if (email) {
-            user.email = email
+        const updatedUserData = {
+            ...(name && { name }),
+            ...(username && { username }),
+            ...(location && { location }),
+            ...(profileImage && { profileImage }),
+            ...(role && { role }),
+            ...(email && { email }),
         }
 
 
+
         if (password && confirmPassword) {
-            if (password === confirmPassword) {
-                user.password = password
-            } else {
+            if (password !== confirmPassword) {
                 return new Response(JSON.stringify({ message: 'Passwords do not match' }), {
                     status: 400,
                 });
             }
+            updatedUserData.password = password;
         }
 
-        await user.save();
+        const { success, user, message } = await updateUser(id, updatedUserData)
+
+        if (!success) {
+            return new Response(JSON.stringify({ message }), { status: 404 });
+
+        }
 
 
         return new Response(
             JSON.stringify({
                 message: 'User updated successfully',
-                id: user._id,
-                name: user.name,
-                username: user.username,
-                email: user.email,
-                location: user.location,
-                role: user.role,
-                profileImage: user.profileImage,
+                user
             }),
             { status: 200 }
         );

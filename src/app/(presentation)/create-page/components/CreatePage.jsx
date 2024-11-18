@@ -257,26 +257,26 @@ const CreatePage = () => {
                         <div className={styles.socialLinks}>
                             <div className={styles.social_flex}>
                                 <div>
-                                    <Image src={facebook} />
+                                    <Image src={facebook} alt='facebook' />
                                 </div>
                                 <button className={styles.socialButton}>Facebook</button>
                             </div>
                             <div className={styles.social_flex}>
                                 <div>
-                                    <Image src={twitter} />
+                                    <Image src={twitter} alt='twitter' />
                                 </div>
                                 <button className={styles.socialButton}>Twitter</button>
                             </div>
                             <div className={styles.social_flex}>
                                 <div>
-                                    <Image src={spotify} />
+                                    <Image src={spotify} alt='spotify' />
                                 </div>
                                 <button className={styles.socialButton}>Spotify</button>
 
                             </div>
                             <div className={styles.social_flex}>
                                 <div>
-                                    <Image src={cloud} />
+                                    <Image src={cloud} alt='cloud' />
                                 </div>
                                 <button className={styles.socialButton}>Cloud</button>
                             </div>
@@ -288,13 +288,13 @@ const CreatePage = () => {
                         <div className={styles.socialLinks}>
                             <div className={styles.social_flex}>
                                 <div>
-                                    <Image src={vemo} />
+                                    <Image src={vemo} alt='vemo' />
                                 </div>
                                 <button className={styles.socialButton}>Vemo</button>
                             </div>
                             <div className={styles.social_flex}>
                                 <div>
-                                    <Image src={monitize} />
+                                    <Image src={monitize} alt='monitize' />
                                 </div>
                                 <button className={styles.socialButton}>Cashapp</button>
                             </div>
@@ -308,12 +308,12 @@ const CreatePage = () => {
                         <div className={styles.user_container}>
                             <div className={styles.user_flex}>
                                 <div>
-                                    <Image src={profile.profileImage} width={60} height={60} className={styles.artistProfile} />
+                                    <Image src={profile.profileImage} width={60} height={60} className={styles.artistProfile} alt='profile image' />
                                 </div>
                                 <div className={styles.list_content}>
                                     <li>
                                         <h6 className='heading_6_regular'>{profile.name}</h6>
-                                        <Image src={verify} />
+                                        <Image src={verify} alt='verify' />
                                     </li>
                                     <div>
                                         <span className='p_x_regular'>{profile.username}</span>

@@ -58,7 +58,7 @@ const PastShows = () => {
 
                     <div className={styles.profile_box}>
                         <div className={styles.person}>
-                            <Image src={profile} />
+                            <Image src={profile} alt='profile image' />
                         </div>
 
                         <div>
@@ -69,7 +69,7 @@ const PastShows = () => {
                         {filteredEvents.map((event, index) => (
                             <div key={index} className={styles.eventCard}>
                                 <div className={styles.eventCardImage}>
-                                    <Image src={person} alt="Event" />
+                                    <Image src={person} alt="Events" />
                                 </div>
                                 <div className={styles.eventInfoFlex}>
                                     <div className={styles.eventInfo}>

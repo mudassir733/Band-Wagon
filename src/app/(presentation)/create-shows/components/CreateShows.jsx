@@ -175,7 +175,7 @@ const CreateShows = () => {
 
                     <div className={styles.image_upload_box}>
                         <label htmlFor="image">
-                            <Image src={penBorder} alt="Upload" />
+                            <Image src={penBorder} alt="Upload photo" />
                         </label>
                         <input
                             id="image"

@@ -7,73 +7,10 @@ import bandwogan from '../../../../../public/images/BandWagon.svg'
 import search from "../../../../../public/images/search.svg"
 import backArro from "../../../../../public/arrow_back.svg"
 import Link from "next/link"
-import { useSession, getSession } from 'next-auth/react'
-import { toast } from 'react-toastify'
 import { Button } from '@nextui-org/react'
-import { useSelector, useDispatch } from "react-redux"
-import {
-    fetchProfileData,
-    updateUserRole,
-    setSearchTerm,
-    setIsExpanded,
-    clearRecentSearch,
-    resetSearch
-} from "../../../../config/store/features/ProfileSlice/profileScreen"
+
 
 const Header = ({ onRoleChange, role, profileImage, isRoleUpdating, isExpanded, searchTerm, recentSearches, handleClose, handleFocus, handleSearch, handleClearRecentSearch }) => {
-    // const { data: session, status } = useSession();
-    // const dispatch = useDispatch();
-
-
-    // const {
-    //     profile,
-    //     isRoleUpdating,
-    //     isExpanded,
-    //     searchTerm,
-    //     recentSearches
-    // } = useSelector(state => state.profile);
-
-
-    // useEffect(() => {
-    //     if (status === 'authenticated' && session?.user?.id) {
-    //         dispatch(fetchProfileData(session.user.id));
-    //     }
-    // }, [status, session, dispatch]);
-
-
-    // const handleRoleSwitch = async () => {
-    //     if (!session?.user?.id) {
-    //         toast.error('User session not found. Please log in.');
-    //         return;
-    //     }
-
-    //     const newRole = role === "user" ? "artist" : "user";
-
-    //     await dispatch(updateUserRole({
-    //         userId: session.user.id,
-    //         newRole
-    //     }));
-
-
-    //     await getSession();
-    // };
-
-
-    // const handleFocus = () => {
-    //     dispatch(setIsExpanded(true));
-    // };
-
-    // const handleClose = () => {
-    //     dispatch(resetSearch());
-    // };
-
-    // const handleSearch = (e) => {
-    //     dispatch(setSearchTerm(e.target.value));
-    // };
-
-    // const handleClearRecentSearch = (index) => {
-    //     dispatch(clearRecentSearch(index));
-    // };
 
     useEffect(() => {
         console.log("Profile Data: ", profileImage);

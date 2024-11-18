@@ -57,3 +57,44 @@ export const getUser = async (userId) => {
         }
     }
 }
+
+// update user
+
+export const updateUser = async (userId, updatedUserData) => {
+    try {
+
+        const user = await userRepository.updateUserById(userId, updatedUserData);
+
+
+
+
+        console.log("user updated Data:", user);
+        if (!user) {
+            return {
+                success: false,
+                message: "User not found",
+            };
+        }
+
+        return {
+            success: true,
+            user: {
+                id: user._id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                location: user.location,
+                role: user.role,
+                profileImage: user.profileImage,
+            },
+        };
+    } catch (error) {
+
+        console.error("Error in updateUser use case:", error);
+
+        return {
+            success: false,
+            message: `Failed to update user: ${error.message}`,
+        };
+    }
+};

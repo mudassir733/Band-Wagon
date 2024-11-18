@@ -12,7 +12,7 @@ export const apiClient = axios.create({
 
 export const userService = {
     getProfile: (userId) => apiClient.get(`/users/${userId}`),
-    updateRole: (userId, role) => apiClient.put(`/users/${userId}`, { role })
+    updateRole: (userId, role, profileData) => apiClient.put(`/users/${userId}`, { role, profileData }),
 };
 
 

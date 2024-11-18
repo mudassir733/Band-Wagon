@@ -17,7 +17,7 @@ const Notifications = () => {
                 <div className={styles.notification_container}>
                     <div className={styles.notification_box}>
                         <div className={styles.left_col}>
-                            <Image src={watar} />
+                            <Image src={watar} alt='water icon' />
                         </div>
                         <div className={styles.right_col}>
                             <div>
@@ -26,7 +26,7 @@ const Notifications = () => {
                             </div>
 
                             <div className={styles.dots}>
-                                <Image src={dots} className={styles.dotsImage} width={25} height={25} />
+                                <Image src={dots} className={styles.dotsImage} width={25} height={25} alt='dots' />
                             </div>
                         </div>
 
