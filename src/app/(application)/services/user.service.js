@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getSession } from 'next-auth/react';
+
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
@@ -12,7 +12,7 @@ export const apiClient = axios.create({
 
 export const userService = {
     getProfile: (userId) => apiClient.get(`/users/${userId}`),
-    updateRole: (userId, role, profileData) => apiClient.put(`/users/${userId}`, { role, profileData }),
+    updateRole: (userId, role) => apiClient.put(`/users/${userId}`, { role }),
 };
 
 
@@ -20,7 +20,7 @@ export const userService = {
 apiClient.interceptors.request.use(
     async (config) => {
 
-        const session = await getSession();
+
         const token = process.env.TOKEN_SECRET;
 
         if (token) {

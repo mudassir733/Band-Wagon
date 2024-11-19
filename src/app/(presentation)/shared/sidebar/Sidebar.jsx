@@ -51,8 +51,8 @@ const Sidebar = ({ role }) => {
 
 
                             <Link href="/profile-screen">
-                                <div className={pathname === "/profile-screen" ? styles.active_bg : ""}>
-                                    <FaRegUser size={18} color={pathname !== "/profile-screen" ? "#fff" : ""} />
+                                <div className={pathname === "/profile-screen" || pathname === "/profile-screen/edit-profile" ? styles.active_bg : ""}>
+                                    <FaRegUser size={18} color={pathname !== "/profile-screen" && pathname !== "/profile-screen/edit-profile" ? "#fff" : ""} />
                                 </div>
                             </Link>
                             <Link href="/notifications">
@@ -95,8 +95,8 @@ const Sidebar = ({ role }) => {
                             </div>
                             <Link href="/profile-screen">
                                 <div className={styles.subRow}>
-                                    <FaRegUser size={18} className={pathname === "/profile-screen" ? styles.active : ""} />
-                                    <p className={pathname === "/profile-screen" ? styles.active : ""}>Profile</p>
+                                    <FaRegUser size={18} className={pathname === "/profile-screen" || pathname === "/profile-screen/edit-profile" ? styles.active : ""} />
+                                    <p className={pathname === "/profile-screen" || pathname === "/profile-screen/edit-profile" ? styles.active : ""}>Profile</p>
                                 </div>
                             </Link>
                             <Link href="/notifications">

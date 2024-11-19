@@ -22,9 +22,9 @@ export const fetchProfileData = createAsyncThunk(
 // update role
 export const updateUserRole = createAsyncThunk(
     'profile/updateRole',
-    async ({ userId, newRole }, { rejectWithValue }) => {
+    async ({ userId, updatedUserData }, { rejectWithValue }) => {
         try {
-            const { data } = await userService.updateRole(userId, newRole)
+            const { data } = await userService.updateRole(userId, updatedUserData)
             console.log("Role updated", data.user);
             return data.user
         } catch (error) {
@@ -33,22 +33,6 @@ export const updateUserRole = createAsyncThunk(
         }
     }
 )
-
-// Update Profile
-// export const updateProfile = createAsyncThunk(
-//     'profile/updateProfile',
-//     async ({ userId, profileData }, { rejectWithValue }) => {
-//         try {
-//             const { data } = await userService.updateProfile(userId, profileData);
-//             console.log("Profile updated successfully:", data.user);
-//             return data.user;
-//         } catch (error) {
-//             const errorMessage = handleApiError(error);
-//             return rejectWithValue(errorMessage);
-//         }
-//     }
-// );
-
 
 
 const profileSlice = createSlice({
@@ -60,10 +44,7 @@ const profileSlice = createSlice({
         isRoleUpdating: false,
         username: '',
         role: 'user',
-        isSubmitting: false,
         isExpanded: false,
-        error: null,
-        status: "idle",
         searchTerm: '',
         recentSearches: [
             { name: 'Allen Ruppersberg', image: '/andy.svg' },
@@ -96,12 +77,10 @@ const profileSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchProfileData.fulfilled, (state, action) => {
-                const { profileImage, name, username, location, role } = action.payload;
-                state.profileImage = profileImage || '';
-                state.name = name || '';
-                state.username = username || '';
-                state.location = location || '';
-                state.role = role || 'user';
+                state.profileImage = action.payload.profileImage || '';
+                state.name = action.payload.name || '';
+                state.username = action.payload.username || '';
+                state.role = action.payload.role || 'user';
                 state.loading = false;
             })
             .addCase(fetchProfileData.rejected, (state, action) => {
@@ -112,27 +91,16 @@ const profileSlice = createSlice({
                 state.isRoleUpdating = true;
                 state.isSubmitting = true;
             }).addCase(updateUserRole.fulfilled, (state, action) => {
-                const { name, username, location, profileImage } = action.payload;
                 state.isRoleUpdating = false;
-                state.name = name;
-                state.username = username;
-                state.location = location;
-                state.profileImage = profileImage;
-                state.isSubmitting = false;
-                if (state.isRoleUpdating === false) {
-                    toast.success(`Role updated to ${state.role}`)
-                } else {
-                    toast.success("Profile updated successfully!");
-                }
-
+                state.role = action.payload.role;
+                toast.success(`Role updated to ${state.role}`);
+                console.log("Action payload", action.payload.role);
 
             }).addCase(updateUserRole.rejected, (state, action) => {
-                state.isSubmitting = false;
                 state.isRoleUpdating = false;
                 state.error = action.payload;
+                toast.error(`Error updating the user role ${action.payload.role} `);
                 console.log("Error payload", state.error)
-
-                toast.error(`Error updating the user role ${action.payload.role}`);
             });
     },
 });

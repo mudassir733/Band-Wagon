@@ -80,7 +80,7 @@ const ProfileScreen = () => {
                                 <p>{username}</p>
                             </div>
                         </div>
-                        <Link href="/edit-profile">
+                        <Link href="/profile-screen/edit-profile">
                             <div className={styles.btn_box}>
                                 <button>Edit profile</button>
                             </div>

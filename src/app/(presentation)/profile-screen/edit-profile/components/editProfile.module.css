@@ -71,7 +71,12 @@
     font-weight: 500;
     line-height: 28px;
 }
-
+.personInfo h4{
+    color: var(--white-color);
+}
+.userLocation{
+    padding-top: 10px;
+}
 .person {
     border-radius: 50%;
     display: flex;

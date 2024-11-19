@@ -499,3 +499,8 @@ h6 {
   font-weight: 500;
   line-height: 20px;
 }
+
+/* active color */
+.active{
+  color: var(--primary-color);
+}

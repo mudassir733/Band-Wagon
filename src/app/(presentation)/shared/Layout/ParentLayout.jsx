@@ -17,8 +17,6 @@ import dynamic from 'next/dynamic';
 const Sidebar = dynamic(() => import('../sidebar/Sidebar'), { ssr: false });
 
 const ParentLayout = ({ children }) => {
-
-
     const { data: session, status } = useSession();
     const path = usePathname()
     const dispatch = useDispatch();
