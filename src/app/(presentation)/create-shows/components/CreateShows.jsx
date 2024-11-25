@@ -302,35 +302,6 @@ const CreateShows = () => {
                             )}
                         </div>
 
-                        {isDropdownVisible && (
-                            <div className={styles.input_box}>
-                                <select
-                                    id="genres"
-                                    name="genres"
-                                    multiple
-                                    value={showData.genres}
-                                    onChange={handleGenreChange}
-                                    className={styles.select_box}
-                                >
-                                    <option value="Blues">Blues</option>
-                                    <option value="Classical">Classical</option>
-                                    <option value="Country">Country</option>
-                                    <option value="EDM">EDM</option>
-                                    <option value="Folk">Folk</option>
-                                    <option value="Funk">Funk</option>
-                                    <option value="Hip-Hop">Hip-Hop</option>
-                                    <option value="Jazz">Jazz</option>
-                                    <option value="Latin">Latin</option>
-                                    <option value="Metal">Metal</option>
-                                    <option value="Pop">Pop</option>
-                                    <option value="Punk">Punk</option>
-                                    <option value="Reggae">Reggae</option>
-                                    <option value="R&B">R&B</option>
-                                    <option value="Rock">Rock</option>
-                                    <option value="Soul">Soul</option>
-                                </select>
-                            </div>
-                        )}
                     </div>
 
                     {/* Submit Button */}

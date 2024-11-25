@@ -13,6 +13,7 @@ import {
 } from "../../../../config/store/features/ProfileSlice/profileScreen"
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic';
+import { toast } from "react-toastify"
 
 const Sidebar = dynamic(() => import('../sidebar/Sidebar'), { ssr: false });
 
@@ -46,14 +47,18 @@ const ParentLayout = ({ children }) => {
             return;
         }
 
-        const newRole = role === "user" ? "artist" : "user";
+        if (role === "artist") {
+            toast.error("Please Logout to reset your Role");
+            return;
+        }
 
-        await dispatch(updateUserRole({
-            userId: session.user.id,
-            newRole
-        }));
+        const newRole = "artist";
 
+        const response = await dispatch(updateUserRole({ userId: session.user.id, role: newRole }));
 
+        if (response.meta.requestStatus === "fulfilled") {
+            toast.success(`Role updated to ${newRole}`);
+        }
     };
 
 

@@ -22,9 +22,9 @@ export const fetchProfileData = createAsyncThunk(
 // update role
 export const updateUserRole = createAsyncThunk(
     'profile/updateRole',
-    async ({ userId, updatedUserData }, { rejectWithValue }) => {
+    async ({ userId, role }, { rejectWithValue }) => {
         try {
-            const { data } = await userService.updateRole(userId, updatedUserData)
+            const { data } = await userService.updateRole(userId, role)
             console.log("Role updated", data.user);
             return data.user
         } catch (error) {
@@ -68,7 +68,11 @@ const profileSlice = createSlice({
         resetSearch: (state) => {
             state.isExpanded = false;
             state.searchTerm = '';
-        }
+        },
+
+        resetState: (state) => {
+            state.role = 'user';
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -89,12 +93,17 @@ const profileSlice = createSlice({
                 state.error = action.payload;
             }).addCase(updateUserRole.pending, (state) => {
                 state.isRoleUpdating = true;
-                state.isSubmitting = true;
             }).addCase(updateUserRole.fulfilled, (state, action) => {
                 state.isRoleUpdating = false;
-                state.role = action.payload.role;
-                toast.success(`Role updated to ${state.role}`);
-                console.log("Action payload", action.payload.role);
+                if (state.role === 'user' && action.payload.role === 'artist') {
+                    state.role = action.payload.role;
+                    console.log("Role successfully updated to", action.payload.role);
+                } else if (state.role === 'artist') {
+                    toast.error("Please Logout to reset your Role");
+                    console.log("Role change from artist to user is not allowed in the same session.");
+                } else {
+                    console.log("No role change necessary.");
+                }
 
             }).addCase(updateUserRole.rejected, (state, action) => {
                 state.isRoleUpdating = false;
@@ -105,6 +114,6 @@ const profileSlice = createSlice({
     },
 });
 
-export const { setSearchTerm, setIsExpanded, clearRecentSearch, resetSearch } = profileSlice.actions;
+export const { setSearchTerm, setIsExpanded, clearRecentSearch, resetSearch, resetState } = profileSlice.actions;
 
 export default profileSlice.reducer;

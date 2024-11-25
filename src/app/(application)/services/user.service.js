@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getSession } from "next-auth/react"
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
@@ -21,10 +22,10 @@ apiClient.interceptors.request.use(
     async (config) => {
 
 
-        const token = process.env.TOKEN_SECRET;
+        const session = await getSession();
 
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        if (session?.token) {
+            config.headers.Authorization = `Bearer ${session.token}`;
         }
         return config;
     },

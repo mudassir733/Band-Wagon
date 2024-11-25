@@ -6,6 +6,7 @@ import Image from 'next/image';
 import verified from "../../../../../public/new_releases.svg";
 import location from "../../../../../public/location_on.svg";
 import { darkThemeStyles, lightThemeStyles } from "../../../../mapTheme/mapTheme"
+import { createCustomMarkerBitmap } from '../../../../utils/customMarkerUtils';
 
 
 
@@ -41,87 +42,27 @@ const GoogleMaps = ({ shows, allShows }) => {
         setMap(null);
     }, []);
 
-    const createCustomMarkerBitmap = async ({
-        imagePath,
-        stemLength = 20,
-        stemWidth = 28,
-        stemOffset = 10,
-        glowSize = 3,
-        glowSpread = 3,
-        imageScale = 40,
-        pinRoundness = 10,
-        glowColor = '#D76020',
-        stemColor = '#D76020',
-    }) => {
-        const image = await loadImage(imagePath);
 
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
 
-        const padding = glowSize;
-        const markerSize = { width: 120, height: 150 + stemLength + padding };
-
-        canvas.width = markerSize.width;
-        canvas.height = markerSize.height;
-
-        // Draw the glow effect
-        context.fillStyle = glowColor;
-        context.globalAlpha = 0.5;
-        context.beginPath();
-        const glowRadius = imageScale / 2 + glowSize;
-        context.arc(markerSize.width / 2, markerSize.height / 2 + padding, glowRadius, 0, 2 * Math.PI);
-        context.fill();
-        context.globalAlpha = 1;
-
-        // Draw the image
-        context.save();
-        const imageX = (markerSize.width - imageScale) / 2;
-        const imageY = (markerSize.height - imageScale) / 2;
-        context.beginPath();
-        context.arc(markerSize.width / 2, markerSize.height / 2 + padding, imageScale / 2, 0, 2 * Math.PI);
-        context.clip();
-        context.drawImage(image, imageX, imageY, imageScale, imageScale);
-        context.restore();
-
-        // Draw the stem
-        const baseY = glowRadius + padding - stemOffset;
-        const tipY = baseY + stemLength;
-        const halfWidth = stemWidth / 2;
-
-        context.fillStyle = stemColor;
-        context.beginPath();
-        context.moveTo(markerSize.width / 2 - halfWidth, baseY);
-        context.quadraticCurveTo(markerSize.width / 2, baseY - 12, markerSize.width / 2 + halfWidth, baseY);
-        context.lineTo(markerSize.width / 2, tipY);
-        context.closePath();
-        context.fill();
-
-        return canvas.toDataURL('/marker.png');
-    };
-
-    const loadImage = (src) => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.src = src;
-        });
-    };
 
     useEffect(() => {
-        const loadMarkers = async () => {
+        const generateMarkerIcons = async () => {
             const icons = {};
-            for (const artist of artists) {
-                icons[`${artist.location},${artist.location}`] = await createCustomMarkerBitmap('/marker.png');
+            for (const show of displayShows) {
+                const icon = await createCustomMarkerBitmap({
+                    imagePath: '/Artist.png',
+                    glowSize: 5,
+                    glowColor: "rgba(255, 0, 0, 0.7)",
+                });
+                icons[`${show.latitude},${show.longitude}`] = icon;
             }
             setMarkerIcons(icons);
-            console.log(icons);
-
         };
 
-        if (artists.length > 0) {
-            loadMarkers();
+        if (displayShows.length > 0) {
+            generateMarkerIcons();
         }
-    }, [artists]);
+    }, [displayShows]);
 
     const toggleTheme = () => {
         setIsDarkTheme((prev) => !prev);
@@ -155,7 +96,10 @@ const GoogleMaps = ({ shows, allShows }) => {
                         <Marker
                             key={`show-${index}`}
                             position={{ lat: show.latitude, lng: show.longitude }}
-
+                            icon={{
+                                url: markerIcons[`${show.latitude},${show.longitude}`],
+                                scaledSize: new google.maps.Size(60, 60),
+                            }}
                         />
                     ))}
 
