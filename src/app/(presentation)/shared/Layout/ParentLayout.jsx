@@ -83,7 +83,7 @@ const ParentLayout = ({ children }) => {
         <div>
             <Header onRoleChange={handleRoleSwitch} role={role} profileImage={profileImage} isRoleUpdating={isRoleUpdating} isExpanded={isExpanded} searchTerm={searchTerm} recentSearches={recentSearches} handleClose={handleClose} handleFocus={handleFocus} handleSearch={handleSearch} handleClearRecentSearch={handleClearRecentSearch} />
             {children}
-            {path === "/artist-profile" ? null : <Sidebar role={role} />}
+            {path === "/artist-profile" || path === "/create-shows" ? null : <Sidebar role={role} />}
 
         </div>
     )

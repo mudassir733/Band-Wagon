@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styles from "./createShows.module.css"
 import Image from 'next/image'
 import penBorder from "../../../../../public/border_color.svg"
@@ -7,8 +7,16 @@ import { toast } from "react-toastify"
 import { useSession } from 'next-auth/react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { ChevronDown, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 let libraries = ['places'];
+
+const genres = [
+    'Blues', 'Classical', 'Country', 'EDM', 'Folk', 'Funk', 'Hip-Hop', 'Jazz', 'Latin', 'Metal', 'Pop', 'Punk', 'Reggae', 'R&B', 'Rock', 'Soul'
+]
+
+
 const CreateShows = () => {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
@@ -29,7 +37,34 @@ const CreateShows = () => {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isOpen, setIsOpen] = useState(false)
+    const [selectedGenres, setSelectedGenres] = useState([])
+    const dropdownRef = useRef(null)
+
+    const toggleDropdown = () => setIsOpen(!isOpen)
+
+    const handleGenreClick = (genre) => {
+        setSelectedGenres(prev =>
+            prev.includes(genre)
+                ? prev.filter(g => g !== genre)
+                : [...prev, genre]
+        )
+
+    }
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsOpen(false)
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     // Autocomplete reference
     const autocompleteRef = useRef(null);
@@ -56,7 +91,16 @@ const CreateShows = () => {
     }
 
     const handleImageChange = (e) => {
-        setImageFile(e.target.files[0]);
+        const file = e.target.files[0];
+        setImageFile(file);
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleGenreChange = (e) => {
@@ -88,12 +132,16 @@ const CreateShows = () => {
 
 
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!imageFile) {
-            alert('Please upload an image');
+            toast.error("Please upload an image.");
+            return;
+        }
+
+        if (selectedGenres.length === 0) {
+            toast.error("Please select at least one genre.");
             return;
         }
 
@@ -102,50 +150,50 @@ const CreateShows = () => {
         try {
             const imageUrl = await uploadImageToCloudinary();
 
-            const response = await fetch('/api/shows', {
-                method: 'POST',
+            const payload = {
+                ...showData,
+                genres: selectedGenres,
+                date: showData.date.toISOString().split("T")[0],
+                image: imageUrl,
+                userId: session?.user?.id,
+            };
+
+            console.log("Payload being sent to API:", payload);
+
+            const response = await fetch("/api/shows", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    ...showData,
-                    date: showData.date.toISOString().split('T')[0],
-                    image: imageUrl,
-                    userId: session?.user?.id
-                }),
+                body: JSON.stringify(payload),
             });
 
-
             const responseData = await response.json();
+            console.log("API Response:", responseData);
 
             if (response.ok) {
-                toast.success('Show created successfully!');
-                console.log('Response:', responseData);
+                toast.success("Show created successfully!");
                 setShowData({
-                    name: '',
-                    bio: '',
-                    location: '',
-                    latitude: '',
-                    longitude: '',
-                    date: '',
-                    time: '',
+                    name: "",
+                    bio: "",
+                    location: "",
+                    latitude: "",
+                    longitude: "",
+                    date: "",
+                    time: "",
                     genres: [],
-                    image: '',
-                })
+                    image: "",
+                });
+                setSelectedGenres([]);
             } else {
-                toast.error('Failed to create show');
-                console.error('Response:', responseData);
+                toast.error(responseData.message || "Failed to create show.");
             }
-
         } catch (error) {
-            console.error('Error creating show:', error);
-            toast.error('Error creating show');
+            console.error("Error in handleSubmit:", error);
+            toast.error("Error creating show.");
         } finally {
             setLoading(false);
         }
-    };
-    const toggleDropdown = () => {
-        setIsDropdownVisible(!isDropdownVisible);
     };
 
 
@@ -172,10 +220,23 @@ const CreateShows = () => {
                 <div className={styles.create_page_container}>
                     <h3 className='heading_3_regular'>Create Show</h3>
 
-
                     <div className={styles.image_upload_box}>
-                        <label htmlFor="image">
-                            <Image src={penBorder} alt="Upload photo" />
+                        <label htmlFor="image" className={styles.upload_label}>
+                            {selectedImage ? (
+                                <Image
+                                    src={selectedImage}
+                                    alt="Uploaded photo"
+                                    width={200}
+                                    height={200}
+                                    className={styles.uploaded_image}
+                                />
+                            ) : (
+                                <Image
+                                    src={penBorder}
+                                    alt="Upload photo"
+                                    className={styles.default_image}
+                                />
+                            )}
                         </label>
                         <input
                             id="image"
@@ -185,8 +246,6 @@ const CreateShows = () => {
                             accept="image/*"
                         />
                     </div>
-
-                    {/* Name */}
                     <div className={styles.name_box}>
                         <div>
                             <p className='p_small_regular'>Name</p>
@@ -287,21 +346,58 @@ const CreateShows = () => {
                             />
                         </div>
                     </div>
-
-                    <div className={styles.genre_box} onClick={toggleDropdown}>
-                        <div>
-                            <span className='p_small_regular'>Genres</span>
+                    <div className={styles.genre_dropdown} ref={dropdownRef}>
+                        <div
+                            className={`${styles.genre_dropdown__header} ${isOpen ? 'open' : ''}`}
+                            onClick={toggleDropdown}
+                        >
+                            <div className={styles.genre_dropdown__header_content}>
+                                <span className={styles.genre_dropdown__label}>Genres</span>
+                                <span className={styles.genre_dropdown__selection}>
+                                    {selectedGenres.length > 0 ? selectedGenres.join(', ') : 'Select genres'}
+                                </span>
+                            </div>
+                            <motion.span
+                                className={styles.genre_dropdown__arrow}
+                                animate={{ rotate: isOpen ? 180 : 0 }}
+                                transition={{ duration: 0.3 }}
+                            ></motion.span>
                         </div>
 
-
-                        <div className={styles.selected_genres}>
-                            {showData.genres.length > 0 ? (
-                                <span>{showData.genres.join(', ')}</span>
-                            ) : (
-                                <span className={styles.placeholder}>Select genres</span>
+                        <AnimatePresence>
+                            {isOpen && (
+                                <motion.div
+                                    className={styles.genre_dropdown__content}
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <div className={styles.genre_dropdown__list}>
+                                        {genres.map((genre) => (
+                                            <motion.div
+                                                key={genre}
+                                                className={`${styles.genre_dropdown__item} ${selectedGenres.includes(genre) ? styles.selected : ''
+                                                    }`}
+                                                onClick={() => handleGenreClick(genre)}
+                                                whileHover={{ backgroundColor: '#1ED760' }}
+                                                whileTap={{ scale: 0.98 }}
+                                            >
+                                                <span>{genre}</span>
+                                                {selectedGenres.includes(genre) && (
+                                                    <motion.span
+                                                        className={styles.genre_dropdown__item_remove}
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        exit={{ scale: 0 }}
+                                                    ></motion.span>
+                                                )}
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.div>
                             )}
-                        </div>
-
+                        </AnimatePresence>
                     </div>
 
                     {/* Submit Button */}
