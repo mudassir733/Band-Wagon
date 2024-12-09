@@ -12,7 +12,6 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import { IoIosEye } from "react-icons/io";
 import { LuSunMedium } from "react-icons/lu";
 import { FaMoon } from "react-icons/fa6";
-import Sidebar from '../../shared/sidebar/Sidebar';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import { signOut } from 'next-auth/react';
@@ -56,8 +55,6 @@ const Setting = () => {
             } catch (error) {
                 console.error('Error fetching profile:', error);
                 toast.error('An error occurred while fetching profile data');
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -338,7 +335,6 @@ const Setting = () => {
 
     return (
         <div className={styles.container}>
-            <Sidebar />
             <div className={styles.mid_section}>
                 <div className={styles.settingsPage}>
                     <div className={styles.sidebar}>

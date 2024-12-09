@@ -36,7 +36,7 @@ const ProfileScreen = () => {
             }
         };
 
-        fetchProfile();
+        // fetchProfile();
 
 
         const handleVisibilityChange = () => {
@@ -50,7 +50,7 @@ const ProfileScreen = () => {
         return () => {
             document.removeEventListener("visibilitychange", handleVisibilityChange);
         };
-    }, [session?.user?.id, dispatch, isFetched]);
+    }, []);
 
     if (loading) {
         return <p>Loading profile...</p>;

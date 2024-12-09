@@ -1,21 +1,20 @@
 .container {
     background-color: black;
     color: white;
-    min-height: 100vh;
+    height: fit-content;
     position: relative;
 }
 
 
 .container .mid_section {
     width: 700px;
-    height: 100%;
+    height: fit-content;
     margin-left: 323px;
 }
 
 
 .settingsPage {
     display: grid;
-    height: fit-content;
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
     gap: 60px;

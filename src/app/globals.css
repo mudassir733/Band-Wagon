@@ -504,3 +504,6 @@ h6 {
 .active{
   color: var(--primary-color);
 }
+.error{
+  color: var(--warning-color-400) !important;
+}

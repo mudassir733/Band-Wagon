@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import styles from "./createShows.module.css"
 import Image from 'next/image'
 import penBorder from "../../../../../public/border_color.svg"
@@ -7,8 +7,9 @@ import { toast } from "react-toastify"
 import { useSession } from 'next-auth/react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { ChevronDown, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 let libraries = ['places'];
 
@@ -18,77 +19,104 @@ const genres = [
 
 
 const CreateShows = () => {
-    const { isLoaded, loadError } = useLoadScript({
+    const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
         libraries,
     });
     const { data: session } = useSession();
-    const [showData, setShowData] = useState({
-        name: '',
-        bio: '',
-        location: '',
-        latitude: '',
-        longitude: '',
-        date: '',
-        time: '',
-        genres: [],
-        image: '',
-    });
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const [imageFile, setImageFile] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [isOpen, setIsOpen] = useState(false)
-    const [selectedGenres, setSelectedGenres] = useState([])
-    const dropdownRef = useRef(null)
-
-    const toggleDropdown = () => setIsOpen(!isOpen)
-
-    const handleGenreClick = (genre) => {
-        setSelectedGenres(prev =>
-            prev.includes(genre)
-                ? prev.filter(g => g !== genre)
-                : [...prev, genre]
-        )
-
-    }
-
-    const handleClickOutside = (event) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setIsOpen(false)
-        }
-    }
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside)
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside)
-        }
-    }, [])
-
-    // Autocomplete reference
+    const [imageFile, setImageFile] = useState(null);
+    const [selectedGenres, setSelectedGenres] = useState([]);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
     const autocompleteRef = useRef(null);
 
-    const handleInputChange = (e) => {
-        if (!e.target || !e.target.name) return;
-        const { name, value } = e.target;
-        setShowData({ ...showData, [name]: value });
+    // Formik validation schema
+    const validationSchema = Yup.object({
+        name: Yup.string().required('Name is required'),
+        bio: Yup.string().required('Bio is required'),
+        location: Yup.string().required('Location is required'),
+        date: Yup.date().required('Date is required'),
+        time: Yup.date().required('Time is required'),
+        genres: Yup.array().min(1, 'At least one genre is required').required(),
+        image: Yup.mixed().required('Image is required'),
+    });
+
+    // Formik setup
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            bio: '',
+            location: '',
+            latitude: '',
+            longitude: '',
+            date: null,
+            time: null,
+            genres: [],
+            image: null,
+        },
+        validationSchema,
+        onSubmit: async (values) => {
+            try {
+                if (!imageFile) {
+                    toast.error("Please upload an image.");
+                    return;
+                }
+
+                const imageUrl = await uploadImageToCloudinary();
+                const payload = {
+                    ...values,
+                    genres: selectedGenres,
+                    date: new Date(values.date).toISOString().split("T")[0],
+                    time: new Date(values.time).toISOString(),
+                    image: imageUrl,
+                    userId: session?.user?.id,
+                };
+
+                const response = await fetch("/api/shows", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                console.log("Show Response", response);
+
+
+                if (response.ok) {
+                    toast.success("Show created successfully!");
+                    formik.resetForm();
+                    setSelectedGenres([]);
+                    setSelectedImage(null);
+                    setSelectedLocation(null);
+                } else {
+                    toast.error("Failed to create show.");
+                }
+            } catch (error) {
+                console.error("Error in handleSubmit:", error);
+                toast.error("Error creating show.");
+            }
+        },
+    });
+
+
+    const uploadImageToCloudinary = async () => {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        formData.append('upload_preset', 'band_wagon');
+
+        const response = await fetch('https://api.cloudinary.com/v1_1/dx0rctl2g/image/upload', {
+            method: "POST",
+            body: formData,
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`Failed to upload image: ${data.error.message}`);
+        }
+        return data.secure_url;
     };
-
-
-    const handleDateChange = (date) => {
-        setShowData((prevData) => ({
-            ...prevData,
-            date: date,
-        }));
-    };
-
-    const handleTimeChnage = (time) => {
-        setShowData((prevData) => ({
-            ...prevData,
-            time: time,
-        }));
-    }
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -103,97 +131,18 @@ const CreateShows = () => {
         }
     };
 
-    const handleGenreChange = (e) => {
-        const selectedGenres = Array.from(e.target.selectedOptions, option => option.value);
-        setShowData({ ...showData, genres: selectedGenres });
-    };
+    const toggleDropdown = () => setIsOpen(!isOpen);
 
-
-
-
-    const uploadImageToCloudinary = async () => {
-        const formData = new FormData();
-        formData.append('file', imageFile);
-        formData.append('upload_preset', 'band_wagon');
-
-        const response = await fetch('https://api.cloudinary.com/v1_1/dx0rctl2g/image/upload', {
-            method: "POST",
-            body: formData,
-        });
-        const data = await response.json();
-
-        console.log(data);
-
-
-        if (!response.ok) {
-            throw new Error(`Failed to upload image: ${data.error.message}`);
-        }
-        return data.secure_url;
-
-
-    };
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!imageFile) {
-            toast.error("Please upload an image.");
-            return;
-        }
-
-        if (selectedGenres.length === 0) {
-            toast.error("Please select at least one genre.");
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            const imageUrl = await uploadImageToCloudinary();
-
-            const payload = {
-                ...showData,
-                genres: selectedGenres,
-                date: showData.date.toISOString().split("T")[0],
-                image: imageUrl,
-                userId: session?.user?.id,
-            };
-
-            console.log("Payload being sent to API:", payload);
-
-            const response = await fetch("/api/shows", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
-
-            const responseData = await response.json();
-            console.log("API Response:", responseData);
-
-            if (response.ok) {
-                toast.success("Show created successfully!");
-                setShowData({
-                    name: "",
-                    bio: "",
-                    location: "",
-                    latitude: "",
-                    longitude: "",
-                    date: "",
-                    time: "",
-                    genres: [],
-                    image: "",
-                });
-                setSelectedGenres([]);
-            } else {
-                toast.error(responseData.message || "Failed to create show.");
-            }
-        } catch (error) {
-            console.error("Error in handleSubmit:", error);
-            toast.error("Error creating show.");
-        } finally {
-            setLoading(false);
-        }
+    const handleGenreClick = (genre) => {
+        setSelectedGenres((prev) =>
+            prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+        );
+        formik.setFieldValue(
+            'genres',
+            selectedGenres.includes(genre)
+                ? selectedGenres.filter((g) => g !== genre)
+                : [...selectedGenres, genre]
+        );
     };
 
 
@@ -202,22 +151,19 @@ const CreateShows = () => {
         if (place && place.geometry) {
             const lat = place.geometry.location.lat();
             const lng = place.geometry.location.lng();
-            setShowData((prevData) => ({
-                ...prevData,
-                location: place.formatted_address,
-                latitude: lat,
-                longitude: lng,
-            }));
+            formik.setFieldValue('location', place.formatted_address);
+            formik.setFieldValue('latitude', lat);
+            formik.setFieldValue('longitude', lng);
             setSelectedLocation({ lat, lng });
-        } else {
-            console.warn("Place or geometry data is missing:", place);
         }
     };
+
     if (!isLoaded) return <div>Loading...</div>;
+
     return (
         <div className={styles.container}>
             <div className={styles.mid_section}>
-                <div className={styles.create_page_container}>
+                <form className={styles.create_page_container} onSubmit={formik.handleSubmit}>
                     <h3 className='heading_3_regular'>Create Show</h3>
 
                     <div className={styles.image_upload_box}>
@@ -241,11 +187,15 @@ const CreateShows = () => {
                         <input
                             id="image"
                             type="file"
-                            onChange={handleImageChange}
+                            onChange={(e) => {
+                                handleImageChange(e);
+                                formik.setFieldValue('image', e.target.files[0]);
+                            }}
                             style={{ display: 'none' }}
                             accept="image/*"
                         />
                     </div>
+                    {formik.touched.image && formik.errors.image && <p className="error">{formik.errors.image}</p>}
                     <div className={styles.name_box}>
                         <div>
                             <p className='p_small_regular'>Name</p>
@@ -254,10 +204,12 @@ const CreateShows = () => {
                             <input
                                 type="text"
                                 name="name"
-                                value={showData.name}
-                                onChange={handleInputChange}
+                                value={formik.values.name}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 placeholder="Andy"
                             />
+                            {formik.touched.name && formik.errors.name && <p className="error">{formik.errors.name}</p>}
                         </div>
                     </div>
 
@@ -270,10 +222,12 @@ const CreateShows = () => {
                             <input
                                 type="text"
                                 name="bio"
-                                value={showData.bio}
-                                onChange={handleInputChange}
+                                value={formik.values.bio}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 placeholder="It is a long established fact"
                             />
+                            {formik.touched.bio && formik.errors.bio && <p className="error">{formik.errors.bio}</p>}
                         </div>
                     </div>
 
@@ -285,19 +239,21 @@ const CreateShows = () => {
                         <div className={styles.input_box}>
                             <Autocomplete
                                 onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-                                onPlaceChanged={() => handlePlaceSelect()}
-                                options={{
-                                    componentRestrictions: { country: 'PK' }
-                                }}
+                                onPlaceChanged={handlePlaceSelect}
+                                options={{ componentRestrictions: { country: 'PK' } }}
                             >
                                 <input
                                     type="text"
                                     name="location"
                                     placeholder="Search location"
-                                    value={showData.location}
-                                    onChange={handleInputChange}
+                                    value={formik.values.location}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
                                 />
                             </Autocomplete>
+                            {formik.touched.location && formik.errors.location && (
+                                <p className="error">{formik.errors.location}</p>
+                            )}
                         </div>
                     </div>
 
@@ -321,12 +277,13 @@ const CreateShows = () => {
                         </div>
                         <div className={styles.input_box}>
                             <DatePicker
-                                selected={showData.date}
-                                onChange={handleDateChange}
+                                selected={formik.values.date}
+                                onChange={(date) => formik.setFieldValue('date', date)}
                                 dateFormat="yyyy-MM-dd"
                                 className={styles.date}
                                 placeholderText="Select Date"
                             />
+                            {formik.touched.date && formik.errors.date && <p className="error">{formik.errors.date}</p>}
                         </div>
                     </div>
 
@@ -337,13 +294,14 @@ const CreateShows = () => {
                         </div>
                         <div className={styles.input_box}>
                             <DatePicker
-                                selected={showData.time}
-                                onChange={handleTimeChnage}
+                                selected={formik.values.time}
+                                onChange={(time) => formik.setFieldValue('time', time)}
                                 showTimeSelect
                                 showTimeSelectOnly
                                 dateFormat="h:mm aa"
                                 placeholderText="Select Time"
                             />
+                            {formik.touched.time && formik.errors.time && <p className="error">{formik.errors.time}</p>}
                         </div>
                     </div>
                     <div className={styles.genre_dropdown} ref={dropdownRef}>
@@ -395,19 +353,23 @@ const CreateShows = () => {
                                             </motion.div>
                                         ))}
                                     </div>
+
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </div>
+                    {formik.touched.genres && formik.errors.genres && (
+                        <p className="error">{formik.errors.genres}</p>
+                    )}
 
                     {/* Submit Button */}
                     <div className={styles.btn_box}>
-                        <button onClick={handleSubmit} disabled={loading}>
-                            {loading ? 'Creating Show...' : 'Create Show'}
+                        <button type='submit' >
+                            {'Create Show'}
                         </button>
 
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     );
